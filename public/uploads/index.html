@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<title>View PDF</title>
+<meta charset=utf-8>
+<meta name=viewport content=width=device-width,initial-scale=1>
+<style>
+  :root {
+    background: whitesmoke;
+  }
+  body {
+    margin: 0;
+  }
+  img {
+    display: block;
+    box-shadow: 0 1px 2px silver;
+    margin: 3em auto;
+    max-width: 100%;
+  }
+  header {
+    position: sticky;
+    zoom: reset;
+    font-size: larger;
+    top: 0;
+    background: white;
+    padding: 0.25em;
+  }
+</style>
+<header>
+  <button id=prev>Prev</button>
+  <button id=next>Next</button>
+</header>
+<p>
+  <span id=loading>Converting...</span>
+  &nbsp;
+  <span id=pagenumber></span>
+</p>
+<img id=page>
+<script>
+  const path = location.pathname;
+  const imgUrl = i => path.replace(/\.html$/,`-${i.toString().padStart(4,'0')}.png`);
+  let pageNumber = 0;
+  page.onerror = () => setTimeout(checkFirstPage, 1000);
+  page.onload = () => {
+    loading.innerText = ''; 
+    pagenumber.innerText = `Page ${(pageNumber + 1)}`;
+    page.onerror = checkFirstPage;
+  }
+  checkFirstPage();
+  prev.onclick = () => {
+    page.src = imgUrl(--pageNumber);
+  };
+  next.onclick = () => {
+    page.src = imgUrl(++pageNumber);
+  }
+
+  function checkFirstPage() {
+    pageNumber = 0;
+    page.src = imgUrl(pageNumber);
+    loading.innerText = 'Converting...';
+  }
+</script>
