@@ -1,5 +1,5 @@
 FROM node:10
-WORKDIR /usr/src/app
+WORKDIR /home/docker
 
 COPY package*.json ./
 COPY . .
