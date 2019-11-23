@@ -3,6 +3,7 @@ const fs = require('fs');
 const spawn = require('child_process').spawn;
 const express = require('express');
 const https = require('https');
+const http = require('http');
 const multer = require('multer');
 const url = require('url');
 const path = require('path');
@@ -16,11 +17,18 @@ let newFiles = 0;
 let syncing = false;
 const PIDFILE = path.join(__dirname, 'pid.txt');
 const HASH_FILE = path.join(__dirname, 'pdfs', 'hashes.json');
+const SSL_OPTS = {};
+let secure = false;
 
-const SSL_OPTS = {
-  key: fs.readFileSync(path.join(__dirname, 'sslcerts', 'privkey.pem')),
-  cert: fs.readFileSync(path.join(__dirname, 'sslcerts', 'fullchain.pem')),
-};
+try {
+  Object.assign(SSL_OPTS,{
+    key: fs.readFileSync(path.join(__dirname, 'sslcerts', 'privkey.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'sslcerts', 'fullchain.pem')),
+  });
+  secure = true;
+} catch(e) {
+  console.warn(`No certs found`);
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, path.join(__dirname,'public', 'uploads')),
@@ -35,7 +43,7 @@ const storage = multer.diskStorage({
   }
 });
 const DEBUG = true;
-const PORT = process.env.PORT || process.argv[2] || 8080;
+const PORT = process.env.PORT || (secure ? (process.argv[2] || 8080) : 8080);
 const uploadPath = path.join(__dirname, 'public', 'uploads');
 const CONVERTER = path.join(__dirname, 'scripts', 'convert.sh');
 const VALID = /^\.[a-zA-Z][a-zA-Z0-9\-\_]{0,12}$/g;
@@ -122,7 +130,7 @@ app.use((err, req, res, next) => {
   res.redirect('/error.html');
 });
 
-https.createServer(SSL_OPTS, app).listen(PORT, async err => {
+(secure ? https : http).createServer(SSL_OPTS, app).listen(PORT, async err => {
   await syncHashes(State.Files);
   await savePID();
   if ( err ) {
