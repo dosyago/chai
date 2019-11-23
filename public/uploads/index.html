@@ -6,55 +6,89 @@
   :root {
     background: whitesmoke;
   }
+
   body {
     margin: 0;
   }
+
   img {
     display: block;
     box-shadow: 0 1px 2px silver;
     margin: 3em auto;
     max-width: 100%;
   }
+
   header {
     position: sticky;
     zoom: reset;
-    font-size: larger;
     top: 0;
     background: white;
     padding: 0.25em;
+    box-shadow: 0 1px 1px silver;
+  }
+
+  header, button {
+    font-size: 18pt;
   }
 </style>
 <header>
   <button id=prev>Prev</button>
   <button id=next>Next</button>
+  &nbsp;
+  <span id=pagenumber></span>
 </header>
 <p>
   <span id=loading>Converting...</span>
   &nbsp;
-  <span id=pagenumber></span>
 </p>
 <img id=page>
 <script>
   const path = location.pathname;
   const imgUrl = i => path.replace(/\.html$/,`-${i.toString().padStart(4,'0')}.png`);
+  let noCram = false;
+  let succeeded = false;
+  let failed = false;
   let pageNumber = 0;
-  page.onerror = () => setTimeout(checkFirstPage, 1000);
+  page.onerror = () => {
+    setTimeout(checkFirstPage, 1001);
+  }
   page.onload = () => {
+    succeeded = true;
     loading.innerText = ''; 
     pagenumber.innerText = `Page ${(pageNumber + 1)}`;
     page.onerror = checkFirstPage;
   }
   checkFirstPage();
   prev.onclick = () => {
-    page.src = imgUrl(--pageNumber);
+    const nextUrl = imgUrl(--pageNumber);
+    if ( noCram ) clearTimeout(noCram);
+    noCram = setTimeout(() => {
+      noCram = false;
+      page.src = nextUrl;
+    }, 300);
   };
   next.onclick = () => {
-    page.src = imgUrl(++pageNumber);
+    const nextUrl = imgUrl(++pageNumber);
+    if ( noCram ) clearTimeout(noCram);
+    noCram = setTimeout(() => {
+      noCram = false;
+      page.src = nextUrl;
+    }, 300);
   }
 
   function checkFirstPage() {
+    if ( failed ) {
+      loading.innerText = 'No such file';
+      return;
+    }
     pageNumber = 0;
     page.src = imgUrl(pageNumber);
     loading.innerText = 'Converting...';
   }
+
+  setTimeout(() => {
+    if ( ! succeeded ) {
+      failed = true;
+    }
+  }, 1000*60*10);
 </script>

@@ -1,3 +1,3 @@
-# Simple PDF to PNG Server
+# pdf-to-image-server
 
-also converts from DOCX, XLS, etc
+

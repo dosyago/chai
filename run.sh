@@ -9,4 +9,4 @@ fi
 cd public/uploads
 ./clean.sh
 cd ../..
-npm start -- $port
+node index.js $port
