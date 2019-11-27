@@ -142,7 +142,7 @@ app.use((err, req, res, next) => {
 process.on('exit', cleanup);
 process.on('error', cleanup);
 process.on('SIGINT', () => cleanup(true));
-process.on('SIGCHLD', async () => {
+process.on('SIGALRM', async () => {
   console.log('Got sig child resetting Files');
   const hashFile = await fs.promises.readFile(HASH_FILE);
   State.Files = new Map(JSON.parse(hashFile));

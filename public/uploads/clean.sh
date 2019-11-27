@@ -24,5 +24,5 @@ cd $HOME/p2./
 ./rebuild_hashes.js
 
 # notify the process that the hashes have been rebuilt
-kill -s CHLD $(cat pid.txt)
+kill -s ALRM $(cat pid.txt)
 
