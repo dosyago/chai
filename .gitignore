@@ -4,7 +4,7 @@ scripts/*.jp*
 scripts/*.svg
 pdfs/*
 public/uploads/file*.*
-secrets/*
+secrets/*.js*
 
 sslcerts/*.pem
 
