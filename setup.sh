@@ -2,6 +2,7 @@
 
 sudo mkdir -p /etc/ImageMagick
 sudo cp policy.xml /etc/ImageMagick
+sudo cp policy.xml /etc/ImageMagick-6
 sudo ./install_deps.sh
 sudo ./nix_install_deps.sh
 
