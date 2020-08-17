@@ -8,6 +8,7 @@ const multer = require('multer');
 const url = require('url');
 const path = require('path');
 const app = express();
+const SECRET = require('./secrets/key.js');
 
 let jobid = 1;
 const jobs = {};
@@ -57,6 +58,14 @@ app.use(express.static('public'));
 
 app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res) => {
   const {file:pdf} = req;
+  const {secret} = req.body;
+
+
+  if ( secret != SECRET ) {
+    console.log({secret,SECRET});
+    res.sendStatus(401);
+    return;
+  }
 
   // logging 
     log(req, {file:pdf.path});
