@@ -3,6 +3,7 @@
 sudo mkdir -p /etc/ImageMagick
 sudo cp policy.xml /etc/ImageMagick
 sudo ./install_deps.sh
+sudo ./nix_install_deps.sh
 
 echo "You might need to rebuild ImageMagick to neable multi-core support. And event include
 --with-tcmalloc to reduce lock contention. All about performance enhancement."

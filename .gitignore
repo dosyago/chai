@@ -4,6 +4,8 @@ scripts/*.jp*
 scripts/*.svg
 public/uploads/file*.*
 
+sslcerts/*.pem
+
 .*.swp
 # Logs
 logs
