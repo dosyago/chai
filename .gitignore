@@ -2,6 +2,7 @@ scripts/*.pdf
 scripts/*.png
 scripts/*.jp*
 scripts/*.svg
+pdfs/*
 public/uploads/file*.*
 secrets/*
 
