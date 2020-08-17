@@ -3,6 +3,7 @@ scripts/*.png
 scripts/*.jp*
 scripts/*.svg
 public/uploads/file*.*
+secrets/*
 
 sslcerts/*.pem
 
