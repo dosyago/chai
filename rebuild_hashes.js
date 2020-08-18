@@ -22,7 +22,7 @@ async function buildHashes() {
     const stat = await fs.promises.stat(filepath);
     if ( stat.isFile() ) {
       const hash = await hasha.fromFile(filepath);
-      const viewUrl = `https://secureview.cloudbrowser.xyz/uploads/${file}.html`;
+      const viewUrl = `https://secureview.quarantines.site/uploads/${file}.html`;
       latestHashes.set(hash,viewUrl);
     }
   }

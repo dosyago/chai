@@ -2,7 +2,7 @@
 
 count=$1
 IFS=$'\n';
-base=https://secureview.cloudbrowser.xyz/uploads/
+base=https://secureview.quarantines.site/uploads/
 
 if [ -z $count ]; then
   count=10
