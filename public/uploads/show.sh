@@ -1,7 +1,7 @@
 #!/bin/sh
 
 count=$1
-IFS=$'\n';
+#IFS=$'\n';
 base=https://secureview.isolation.site/uploads/
 
 if [ -z $count ]; then
