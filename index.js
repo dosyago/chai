@@ -87,7 +87,7 @@ app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res)
     }
 
   // job start
-  const subshell = spawn(CONVERTER, [pdf.path, uploadPath]);
+  const subshell = spawn(CONVERTER, [pdf.path, uploadPath, 'jpeg']);
 
   // subshell clean up handling
   {
