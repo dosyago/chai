@@ -24,6 +24,7 @@
     "nodemon": "latest"
   },
   "dependencies": {
+    "compression": "^1.7.4",
     "express": "latest",
     "hasha": "latest",
     "multer": "latest"

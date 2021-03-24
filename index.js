@@ -1,3 +1,4 @@
+const compression = require('compression');
 const hasha = require('hasha');
 const fs = require('fs');
 const spawn = require('child_process').spawn;
@@ -54,7 +55,8 @@ const State = {
   Files
 };
 
-app.use(express.static('public'));
+app.use(compression);
+app.use(express.static('public', { maxAge: 31557600 }));
 
 app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res) => {
   const {file:pdf} = req;
