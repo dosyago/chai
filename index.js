@@ -55,7 +55,7 @@ const State = {
   Files
 };
 
-app.use(compression);
+app.use(compression());
 app.use(express.static('public', { maxAge: 31557600 }));
 
 app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res) => {
