@@ -11,7 +11,8 @@ fi
 
 cp $base/index.html $1.html
 
-  convert -verbose -density 120 -background ivory -alpha remove -alpha off -quality 75 $1 +adjoin $1-%04d.$format || (mutool draw -i -o $1-%04d.$format $1 && $base/../../scripts/rename_1_based.sh $1 $format)
+  #convert -verbose -density 120 -background ivory -alpha remove -alpha off -quality 75 $1 +adjoin $1-%04d.$format || (mutool draw -i -o $1-%04d.$format $1 && $base/../../scripts/rename_1_based.sh $1 $format)
+  convert -verbose -density 120 -background ivory -alpha remove -alpha off -quality 75% -strip -interlace Plane -gaussian-blur 0.05 $1 +adjoin $1-%04d.$format || (mutool draw -i -o $1-%04d.$format $1 && $base/../../scripts/rename_1_based.sh $1 $format)
 
 mv $1 $base/../../pdfs/
 
