@@ -36,6 +36,7 @@
   <button id=next>Next</button>
   &nbsp;
   <span id=pagenumber></span>
+  <button id=rotate>Rotate</button>
 </header>
 <p>
   <span id=loading>Converting...</span>
@@ -49,6 +50,7 @@
   let succeeded = false;
   let failed = false;
   let pageNumber = 0;
+  let ang = 0;
   page.onerror = () => {
     setTimeout(checkFirstPage, 1001);
   }
@@ -74,6 +76,10 @@
       noCram = false;
       page.src = nextUrl;
     }, 300);
+  }
+  rotate.onclick = () => {
+    ang = (ang + 90) % 360;
+    page.style.transform = `rotate(${ang}deg)`;
   }
 
   function checkFirstPage() {
