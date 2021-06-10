@@ -62,7 +62,6 @@ app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res)
   const {file:pdf} = req;
   const {secret} = req.body;
 
-
   if ( secret != SECRET ) {
     console.log({secret,SECRET});
     res.sendStatus(401);
