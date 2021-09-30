@@ -8,6 +8,7 @@ const http = require('http');
 const multer = require('multer');
 const url = require('url');
 const path = require('path');
+const os = require('os');
 const app = express();
 const SECRET = require('./secrets/key.js');
 
@@ -24,8 +25,8 @@ let secure = false;
 
 try {
   Object.assign(SSL_OPTS,{
-    key: fs.readFileSync(path.join(__dirname, 'sslcerts', 'privkey.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'sslcerts', 'fullchain.pem')),
+    key: fs.readFileSync(path.join(os.homedir(), 'sslcerts', 'privkey.pem')),
+    cert: fs.readFileSync(path.join(os.homedir(), 'sslcerts', 'fullchain.pem')),
   });
   secure = true;
 } catch(e) {
