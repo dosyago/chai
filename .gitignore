@@ -1,3 +1,7 @@
+# app specific
+pid.txt
+log
+
 scripts/*.pdf
 scripts/*.png
 scripts/*.jp*

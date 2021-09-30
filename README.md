@@ -1,32 +1,93 @@
-# [:sparkling_heart: DocumentSpark](https://github.com/dosyago/documentspark)
+# 🌈 DocumentSpark: Your Zero Trust Document Viewer! 🌟
 
-## Simple secure document viewing server. 
+Visit us on [GitHub](https://github.com/dosyago/documentspark)
 
-Converts a document to a picture of its pages. Content disarm and reconstruction. CDR. Formerly p2.
+## The Future of Secure Document Viewing is Here! 🎉
 
-## Use it
+Convert documents into spectacular images for each page, and view them securely in your browser! No downloads, no third-party apps—just pure, joyful, **Zero Trust** goodness! Proudly part of the [BrowserBox Pro cloud browser product](https://github.com/dosyago/BrowserBoxPro) by Dosyago.
+
+---
+
+## 🌈 Why You'll Love DocumentSpark 🌈
+
+- **Zero Trust Security**: Your document stays with you, always! 🛡️
+- **Universal Formats**: PDF, DOC, XLSX—we speak all languages! 🌐
+- **High-Performance**: Get ready to be amazed by the speed! 🚀
+- **Open Source**: Built by the community, for the community! 💖
+
+---
+
+## ✨ How the Magic Happens ✨
+
+1. **Send Us Your Document**: Upload a file or just drop a URL.
+2. **Transformation Time**: We convert it into a beautiful gallery of high-quality images. 🎨
+3. **Enjoy**: Open your browser to a vivid, scrollable display of your document. 🌠
+
+---
+
+## 🌟 SEO Keywords 🌟
+
+- Zero Trust Document Viewer
+- Secure PDF Viewer
+- Browser-based Document Viewer
+- Multi-Format Document Viewer
+
+---
+
+## 🚀 Quick Start Guide 🚀
 
 ```sh
-$ npm i documentspark@latest
-$ cd node_modules/documentspark
-$ ./setup.sh 
-$ ./restart.sh
+# Clone the treasure!
+git clone https://github.com/dosyago/documentspark.git
+# Enter the magical kingdom
+cd documentspark
+# Set up the wizardry
+./scripts/setup.sh
+# Ignite the spark!
+./scripts/restart.sh
 ```
 
-If you have SSL certs in `$HOME/sslcerts/` these will be used, if not the server will run on HTTP. It will run under `pm2` and default to port `443`. You can supply a custom port with `npm start <PORT>`.
+*If you just want to run the server temporarily, you can hit `npm start` instead of the `pm2`-using `./scripts/restart.sh`*
 
-Navigate to `yourserver:your_port/secretpage-canneverbefound.html` to convert a document. You can input either a file, or a URL. It may not always be possible to obtain a document from the URL.
+---
 
-Document view pages are not protected by any authentication, they are simply chosen pseudo-randomly. You can modify the code to give document viewing pages longer, more securely random URLs. 
+## 🌠 Pro Tips and Tricks 🌠
 
-By default, converted documents are cleaned out after 3 days. You can change this in `/public/uploads/clean.sh` which runs every few minutes and cleans any documents older than 4319 minutes (roughly 3 days). 
+- Got SSL certs? Place them in `$HOME/sslcerts/` and we'll go HTTPS! 🌐
+- Tweak the `secret=<your secret>` URL parameter for extra magical powers. 🌟
+- Document lifespan is 3 days by default, but feel free to change that in `/public/uploads/clean.sh`. 🕰️
 
-## Make it an API
+---
 
-There's a very simple "master key" secret parameter sent with the POST request. You can call this POST endpoint via a secure HTTPS API (using multitype/form encoding) and pass your custom `secret=` as a parameter to authorize the conversion. 
+## 🎉 Turn It into an API 🎉
 
-## License
+Want more? Use the POST endpoint with a `secret=` parameter to authorize conversion via a secure HTTPS API.
 
-Licensed under AGPL-3.0.
+---
 
-If you'd like to deploy this in your org, or for a for-profit project, write me (cris@dosycorp.com) about a license exmeption.
+## 🌈 System Requirements 🌈
+
+We recommend a beefy machine with at least 4 cores and 8 GB RAM for a spellbinding experience.
+
+---
+
+## 🌟 Special Thanks 🌟
+
+- [ImageMagick](https://github.com/ImageMagick/ImageMagick)
+- [Ghostscript](https://git.ghostscript.com/)
+- [LibreOffice](https://www.libreoffice.org/)
+
+*\*No affiliation*
+
+---
+
+## 📜 License 📜
+
+AGPL-3.0. For custom licensing options, email us at [hello@dosyago.com](mailto:hello@dosyago.com).
+
+---
+
+**Ignite the Spark in Your Documents with DocumentSpark! 🌈**
+
+---
+

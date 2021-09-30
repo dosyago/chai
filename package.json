@@ -1,11 +1,11 @@
 {
   "name": "documentspark",
-  "version": "1.5.2",
+  "version": "1.6.2",
   "description": "documentspark :: document -> picture_of_page[]",
   "main": "index.js",
   "scripts": {
-    "start": "./run.sh",
-    "test": "nodemon index.js -- 8080"
+    "start": "(pm2 delete run-docspark || true) && ./scripts/run-docspark.sh",
+    "test": "node --watch ./src/index.js -- 8080"
   },
   "repository": {
     "type": "git",
@@ -20,14 +20,11 @@
     "url": "https://github.com/dosyago/documentspark/issues"
   },
   "homepage": "https://github.com/dosyago/documentspark#readme",
-  "devDependencies": {
-    "nodemon": "^2.0.7",
-    "pm2": "^5.1.2"
-  },
   "dependencies": {
-    "compression": "^1.7.4",
+    "pm2": "latest",
+    "compression": "latest",
     "express": "latest",
-    "hasha": "^5.2.2",
+    "hasha": "latest",
     "multer": "latest"
   },
   "license": "AGPL-3.0"
