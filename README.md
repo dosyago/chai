@@ -1,16 +1,22 @@
-## A Simple PDF to PNG server
+# [:sparkling_heart: DocumentSpark](https://github.com/dosyago/documentspark)
 
-Also works for DOCX, XLSX, etc
+## Simple secure document viewing server. 
 
-Popular
+Converts a document to a picture of its pages. Content disarm and reconstruction. CDR. Formerly p2.
+
+## Use it
+
+```sh
+$ npm i documentspark@latest
+$ cd node_modules/documentspark
+$ ./setup.sh 
+$ ./restart.sh
+```
+
+If you have SSL certs in `$HOME/sslcerts/` these will be used, if not the server will run on HTTP. It will run under `pm2` and default to port `443`. You can supply a custom port with `npm start <PORT>`.
 
 ## License
 
-You can use this repo to play with a securely view documents remotely in the cloud, rather than on your own device. Useful for security and automation. 
+Licensed under AGPL-3.0.
 
-If you're a developer you can include a "SecureView" in any other web application (for non-commercial use only).
-
-If you're like to deploy this in your org, or for a for-profit project, write me: cris@dosycorp.com Or keep an eye out for the cloud service, coming soon. Official government use OK without purchase, as long as deployment is done in-house (or using Dosyago Corporation, not by other contractors, nor part of a paid deployment). If you're in government and you'd like to deploy this and want help, contact me for help or to discuss a deployment contract.
-
-
-
+If you'd like to deploy this in your org, or for a for-profit project, <a href=mailto:cris@dosycorp?subject=DocumentSpark%20License&body=Hi%20Cris>write me about a license exmeption.</a>
