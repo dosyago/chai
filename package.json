@@ -1,7 +1,7 @@
 {
-  "name": "@dosy-private/pdf-to-image-server",
-  "version": "1.3.0",
-  "description": "In PDF out IMAGES of pages",
+  "name": "documentspark",
+  "version": "1.3.1",
+  "description": "documentspark :: document -> picture_of_page[]",
   "main": "index.js",
   "scripts": {
     "start": "./run.sh",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/crislin2046/pdf-to-image-server.git"
+    "url": "git+https://github.com/dosyago/documentspark.git"
   },
   "keywords": [
     "pdf",
@@ -17,9 +17,9 @@
   ],
   "author": "@dosy",
   "bugs": {
-    "url": "https://github.com/crislin2046/pdf-to-image-server/issues"
+    "url": "https://github.com/dosyago/documentspark/issues"
   },
-  "homepage": "https://github.com/crislin2046/pdf-to-image-server#readme",
+  "homepage": "https://github.com/dosyago/documentspark#readme",
   "devDependencies": {
     "nodemon": "^2.0.7",
     "pm2": "^5.1.2"
@@ -29,5 +29,6 @@
     "express": "latest",
     "hasha": "^5.2.2",
     "multer": "latest"
-  }
+  },
+  "license": "AGPL-3.0"
 }
