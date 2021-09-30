@@ -35,9 +35,9 @@ You can try recompiling ImageMagick to have multicore support. I found this sign
 
 ## Thanks to 
 
-- [https://github.com/ImageMagick/ImageMagick](ImageMagick)
-- [https://git.ghostscript.com/](Ghostscript)
-- [https://www.libreoffice.org/](LibreOffice)
+- [ImageMagick](https://github.com/ImageMagick/ImageMagick)
+- [Ghostscript](https://git.ghostscript.com/)
+- [LibreOffice](https://www.libreoffice.org/)
 
 ## License
 
