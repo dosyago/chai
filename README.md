@@ -37,4 +37,4 @@ You can try recompiling ImageMagick to have multicore support. I found this sign
 
 Licensed under AGPL-3.0.
 
-If you'd like to deploy this in your org, or for a for-profit project, [mailto:cris@dosycorp?subject=DocumentSpark%20License&body=Hi%20Cris](write me about a license exmeption.)
+If you'd like to deploy this in your org, or for a for-profit project, write me (cris@dosycorp.com) about a license exmeption.
