@@ -29,4 +29,4 @@ There's a very simple "master key" secret parameter sent with the POST request. 
 
 Licensed under AGPL-3.0.
 
-If you'd like to deploy this in your org, or for a for-profit project, <a href=mailto:cris@dosycorp?subject=DocumentSpark%20License&body=Hi%20Cris>write me about a license exmeption.</a>
+If you'd like to deploy this in your org, or for a for-profit project, [mailto:cris@dosycorp?subject=DocumentSpark%20License&body=Hi%20Cris](write me about a license exmeption.)
