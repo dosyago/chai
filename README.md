@@ -33,11 +33,13 @@ You need a beefy machine. 4 cores, with GB RAM for most documents. But more is b
 
 You can try recompiling ImageMagick to have multicore support. I found this significantly improves performance.
 
-## Thanks to 
+## Thanks to\*
 
 - [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 - [Ghostscript](https://git.ghostscript.com/)
 - [LibreOffice](https://www.libreoffice.org/)
+
+*\*No affiliation*
 
 ## License
 
