@@ -1,4 +1,4 @@
-FROM node:10
+FROM node:12
 WORKDIR /home/docker
 
 COPY package*.json ./
@@ -8,4 +8,4 @@ USER docker
 RUN ./nix_install_deps.sh
 EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["npm", "start", "8080"]
