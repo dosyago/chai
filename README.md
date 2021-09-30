@@ -2,7 +2,7 @@
 
 ## Simple secure document viewing server. 
 
-Converts a document to a picture of its pages. Content disarm and reconstruction. CDR. Formerly p2.
+Converts a document to a picture of its pages. View a document from the internet without downloading or running it on your machine, and without needing a word processor, spreadsheet app, or PDF viewer installed. Content disarm and reconstruction. CDR. Formerly p2.
 
 ## Use it
 
@@ -32,6 +32,12 @@ You need a beefy machine. 4 cores, with GB RAM for most documents. But more is b
 ## Improving perf
 
 You can try recompiling ImageMagick to have multicore support. I found this significantly improves performance.
+
+## Thanks to 
+
+- [https://github.com/ImageMagick/ImageMagick](ImageMagick)
+- [https://git.ghostscript.com/](Ghostscript)
+- [https://www.libreoffice.org/](LibreOffice)
 
 ## License
 
