@@ -25,6 +25,14 @@ By default, converted documents are cleaned out after 3 days. You can change thi
 
 There's a very simple "master key" secret parameter sent with the POST request. You can call this POST endpoint via a secure HTTPS API (using multitype/form encoding) and pass your custom `secret=` as a parameter to authorize the conversion. 
 
+## System Requirements
+
+You need a beefy machine. 4 cores, with GB RAM for most documents. But more is better. Smaller machines will routinely run out of memory or take a long time when running the `libreoffice`, `imagemagick` and `gs` jobs.
+
+## Improving perf
+
+You can try recompiling ImageMagick to have multicore support. I found this significantly improves performance.
+
 ## License
 
 Licensed under AGPL-3.0.

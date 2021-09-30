@@ -10,17 +10,18 @@ const url = require('url');
 const path = require('path');
 const os = require('os');
 const app = express();
-const SECRET = require('./secrets/key.js');
 
-let jobid = 1;
-const jobs = {};
-const Files = new Map();
+const SECRET = require('./secrets/key.js');
+const MAX_FILE_DL_TIME = 147*1000; // time to allow a download before rejecting ~ 2.5 mins
 const WAIT_NEW_FILES_BEFORE_DISK_SYNC = 3;
-let newFiles = 0;
-let syncing = false;
 const PIDFILE = path.join(__dirname, 'pid.txt');
 const HASH_FILE = path.join(__dirname, 'pdfs', 'hashes.json');
+const jobs = {};
+const Files = new Map();
 const SSL_OPTS = {};
+let jobid = 1;
+let newFiles = 0;
+let syncing = false;
 let secure = false;
 
 try {
@@ -45,6 +46,47 @@ const storage = multer.diskStorage({
     }
   }
 });
+
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+// adapted from code at source: https://stackoverflow.com/a/22907134/10283964
+const download = async function(url, dest) {
+  let resolve, reject;
+  const pr = new Promise((res,rej) => (resolve = res, reject = rej));
+  const pro = url.startsWith('https') ? https : http;
+  const file = fs.createWriteStream(dest);
+  let newFilename;
+  const request = pro.get(url, function(response) {
+    try {
+      response.pipe(file);
+      newFilename = response.headers['content-disposition'];
+      if ( newFilename ) {
+        newFilename = newFilename.split('filename=').pop();
+        if ( newFilename.startsWith('"') ) {
+          newFilename = newFilename.replace(/^"/,'').replace(/"$/,'');
+        } else if ( newFilename.startsWith("'") ) {
+          newFilename = newFilename.replace(/^'/,'').replace(/'$/,'');
+        }
+        newFilename = newFilename.trim();
+        if ( newFilename === path.basename(url) ) {
+          newFilename = undefined;
+        } else {
+          newFilename = nextFileName(path.extname(newFilename));
+        }
+      }
+      file.on('finish', function() {
+        file.close(() => resolve(newFilename));  // close() is async, call cb after close completes.
+      });
+    } catch(e) {
+      console.warn(e);
+    }
+  }).on('error', function(err) { // Handle errors
+    fs.unlink(dest); // Delete the file async. (But we don't check the result)
+    reject(err.message);
+  });
+  const result = Promise.race([pr, sleep(MAX_FILE_DL_TIME).then(() => reject('timed out'))]);
+  result.catch(err => (fs.unlink(dest), err));
+  return result;
+};
 const DEBUG = true;
 const PORT = process.env.PORT || (secure ? (process.argv[2] || 8080) : 8080);
 const uploadPath = path.join(__dirname, 'public', 'uploads');
@@ -60,8 +102,8 @@ app.use(compression());
 app.use(express.static('public', { maxAge: 31557600 }));
 
 app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res) => {
-  const {file:pdf} = req;
-  const {secret} = req.body;
+  let {file:pdf} = req;
+  const {secret, url:docUrl} = req.body;
 
   if ( secret != SECRET ) {
     console.log({secret,SECRET});
@@ -70,66 +112,113 @@ app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res)
   }
 
   // logging 
-    log(req, {file:pdf.path});
+    log(req, {file:pdf && pdf.path, docUrl});
 
-  // hash check for duplicate files
-    const hash = await hasha.fromFile(pdf.path);
-    const viewUrl = `${req.protocol}://${req.get('host')}/uploads/${pdf.filename}.html`;
-    console.log({hash});
-    if ( State.Files.has(hash) ) {
-      const existingViewUrl = State.Files.get(hash);
-      log(req, {note:'File exists', hash, existingViewUrl});
-      return res.end(existingViewUrl);
-    } else {
-      newFiles += 1;
-      State.Files.set(hash, viewUrl);
-      if ( newFiles % WAIT_NEW_FILES_BEFORE_DISK_SYNC == 0 ) {
-        syncHashes(State.Files);
-      }
+  if ( docUrl ) {
+    let ext = path.extname(docUrl);
+    if ( ! ext ) {
+      ext = '.tempdownload';
     }
-
-  // job start
-  const subshell = spawn(CONVERTER, [pdf.path, uploadPath, 'jpeg']);
-
-  // subshell clean up handling
-  {
-    const myJobId = jobid;
-    let killed = false;
-    jobs[myJobId] = {jobid,subshell,killit,path:pdf.path};
-    jobid++;
-
-    subshell.stdout.pipe(process.stdout);
-    subshell.stderr.pipe(process.stderr);
-
-    subshell.stdout.on('end', () => {
-      killit();
-    });
-    subshell.on('error', (err) => {
-      console.warn(err);
-      killit();
-    });
-    subshell.on('close', (code) => {
-      if ( code != 0 ) {
-        console.warn(`${CONVERTER} exited with code ${code}`);
-        logErr(`${CONVERTER} exited with code ${code}`);
-      } else {
-        console.log(`${CONVERTER} exited`);
+    const filename = nextFileName(ext);
+    pdf = {
+      path: path.resolve(uploadPath, filename),
+      filename
+    };
+    try {
+      let newFilename = await download(docUrl, pdf.path);
+      if ( newFilename ) { // from content-disposition
+        const newPath = path.resolve(uploadPath, newFilename);
+        console.log({newPath1:newPath});
+        fs.renameSync(pdf.path, newPath);
+        pdf.path = newPath;
+        pdf.filename = newFilename;
+      } else if ( ext === '.tempdownload' ) { // need to get it
+        try {
+          ext = undefined;
+          ext = execSync(`file --mime-type ${pdf.path}`).split('/').pop();
+        } catch(e) {
+          console.warn(`Error trying to get mime filetype extension for ${pdf.path}`, e);
+        } finally {
+          // fudge it, it's a PDF, it's always PDFs
+          if ( ! ext ) {
+            ext = '.pdf';
+          }
+        }
+        newFilename = nextFileName(ext);
+        const newPath = path.resolve(uploadPath, newFilename);
+        console.log({newPath});
+        fs.renameSync(pdf.path, newPath);
+        pdf.path = newPath;
       }
-    });
-
-    function killit() {
-      if ( killed ) return;
-      killed = true;
-      delete jobs[myJobId];
-      subshell.stdin.pause();
-      subshell.stdout.pause();
-      subshell.stderr.pause();
-      subshell.kill();
+    } catch(e) {
+      const msg = `Error on download file ${docUrl}: ${e}`;
+      console.log(msg, e);
+      return res.status(500).send(msg);
     }
   }
+  
+  if ( pdf ) { 
+    // hash check for duplicate files
+      const hash = await hasha.fromFile(pdf.path);
+      const viewUrl = `${req.protocol}://${req.get('host')}/uploads/${pdf.filename}.html`;
+      console.log({hash});
+      if ( State.Files.has(hash) ) {
+        const existingViewUrl = State.Files.get(hash);
+        log(req, {note:'File exists', hash, existingViewUrl});
+        return res.end(existingViewUrl);
+      } else {
+        newFiles += 1;
+        State.Files.set(hash, viewUrl);
+        if ( newFiles % WAIT_NEW_FILES_BEFORE_DISK_SYNC == 0 ) {
+          syncHashes(State.Files);
+        }
+      }
 
-  // give the view url
-    return res.end(viewUrl);
+    // job start
+    const subshell = spawn(CONVERTER, [pdf.path, uploadPath, 'jpeg']);
+
+    // subshell clean up handling
+    {
+      const myJobId = jobid;
+      let killed = false;
+      jobs[myJobId] = {jobid,subshell,killit,path:pdf.path};
+      jobid++;
+
+      subshell.stdout.pipe(process.stdout);
+      subshell.stderr.pipe(process.stderr);
+
+      subshell.stdout.on('end', () => {
+        killit();
+      });
+      subshell.on('error', (err) => {
+        console.warn(err);
+        killit();
+      });
+      subshell.on('close', (code) => {
+        if ( code != 0 ) {
+          console.warn(`${CONVERTER} exited with code ${code}`);
+          logErr(`${CONVERTER} exited with code ${code}`);
+        } else {
+          console.log(`${CONVERTER} exited`);
+        }
+      });
+
+      function killit() {
+        if ( killed ) return;
+        killed = true;
+        delete jobs[myJobId];
+        subshell.stdin.pause();
+        subshell.stdout.pause();
+        subshell.stderr.pause();
+        subshell.kill();
+      }
+    }
+
+    // give the view url
+      return res.end(viewUrl);
+  } else {
+    res.end(`Please provide a file or a URL`);
+  }
 });
 
 app.use((err, req, res, next) => {
@@ -259,5 +348,5 @@ function mergeMaps(m1, m2) {
 }
 
 function savePID() {
-  return fs.promises.writeFile(PIDFILE, process.pid);
+  return fs.promises.writeFile(PIDFILE, process.pid+'');
 }
