@@ -4,6 +4,15 @@
 
 Converts a document to a picture of its pages. View a document from the internet without downloading or running it on your machine, and without needing a word processor, spreadsheet app, or PDF viewer installed. Content disarm and reconstruction. CDR. Formerly p2.
 
+## From the [comments](https://news.ycombinator.com/item?id=28705969)
+
+> This is a very simple server in NodeJS to accept a document upload (or a URL) and convert that document (using ImageMagick, LibreOffice and GhostScript) into a series of images, one for each page of the document.
+
+> The point was originally to allow people to view documents securely (such as email attachments) without needing to run nor download said document to their own devices. It was successful in doing that, but its use grew to becoming ad-hoc document hosting where people were attracted to the ability to access a page of a document, without needing to download the entire document.
+
+> The code is shared as something you can build upon and adapt to your uses in the open. It's not meant as a finished solution, it's meant as a starting point, something to give you ideas for how to implement your own version, or something to plug in to your own open-source work. The project was originally called "p2." for "PDF to ...", but it works on a wide range of source documents, including DOCX and (often but not always) XLSX, and so on. It doesn't work on HTML or TXT.
+
+
 ## Use it
 
 ```sh
@@ -45,4 +54,4 @@ You can try recompiling ImageMagick to have multicore support. I found this sign
 
 Licensed under AGPL-3.0.
 
-If you'd like to deploy this in your org, or for a for-profit project, write me (cris@dosycorp.com) about a license exmeption.
+If you'd like to deploy this in your org without going open-source, or for a for-profit project, write me (cris@dosycorp.com) about a license exmeption.
