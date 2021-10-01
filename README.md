@@ -27,7 +27,7 @@ There's a very simple "master key" secret parameter sent with the POST request. 
 
 ## System Requirements
 
-You need a beefy machine. 4 cores, with GB RAM for most documents. But more is better. Smaller machines will routinely run out of memory or take a long time when running the `libreoffice`, `imagemagick` and `gs` jobs.
+You need a beefy machine. 4 cores, with 8 GB RAM for most documents. But more is better. Smaller machines will routinely run out of memory or take a long time when running the `libreoffice`, `imagemagick` and `gs` jobs.
 
 ## Improving perf
 
