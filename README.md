@@ -7,11 +7,10 @@ Converts a document to a picture of its pages. View a document from the internet
 ## From the [comments](https://news.ycombinator.com/item?id=28705969)
 
 > This is a very simple server in NodeJS to accept a document upload (or a URL) and convert that document (using ImageMagick, LibreOffice and GhostScript) into a series of images, one for each page of the document.
-
+>
 > The point was originally to allow people to view documents securely (such as email attachments) without needing to run nor download said document to their own devices. It was successful in doing that, but its use grew to becoming ad-hoc document hosting where people were attracted to the ability to access a page of a document, without needing to download the entire document.
-
+>
 > The code is shared as something you can build upon and adapt to your uses in the open. It's not meant as a finished solution, it's meant as a starting point, something to give you ideas for how to implement your own version, or something to plug in to your own open-source work. The project was originally called "p2." for "PDF to ...", but it works on a wide range of source documents, including DOCX and (often but not always) XLSX, and so on. It doesn't work on HTML or TXT.
-
 
 ## Use it
 
