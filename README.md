@@ -53,4 +53,4 @@ You can try recompiling ImageMagick to have multicore support. I found this sign
 
 Licensed under AGPL-3.0.
 
-If you'd like to deploy this in your org without going open-source, or for a for-profit project, write me (cris@dosycorp.com) about a license exmeption.
+If you'd like to deploy this in your org without going open-source or for a for-profit project where youd want to release the source under AGPL-3.0 as well, write me (cris@dosycorp.com) about a license exemption.
