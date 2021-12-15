@@ -2,7 +2,7 @@
 
 ## Simple secure document viewing server. Used by ViewFinder&trade;
 
-Converts a document to a picture of its pages. View a document from the internet without downloading or running it on your machine, and without needing a word processor, spreadsheet app, or PDF viewer installed. Content disarm and reconstruction. CDR. Formerly p2.
+Converts a document to a picture of its pages. View a document from the internet without downloading or running it on your machine, and without needing a word processor, spreadsheet app, or PDF viewer installed. This provides content disarm and reconstruction, or CDR. Also known as [p2.](#), is deployed commercially by Dosyago in their [ViewFinder cloud browser product](https://github.com/i5ik/ViewFinder).
 
 ## From the [comments](https://news.ycombinator.com/item?id=28705969)
 
