@@ -1,6 +1,6 @@
 # [:sparkling_heart: DocumentSpark](https://github.com/dosyago/documentspark)
 
-## Simple secure document viewing server. 
+## Simple secure document viewing server. Used by ViewFinder&trade;
 
 Converts a document to a picture of its pages. View a document from the internet without downloading or running it on your machine, and without needing a word processor, spreadsheet app, or PDF viewer installed. Content disarm and reconstruction. CDR. Formerly p2.
 
