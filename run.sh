@@ -6,7 +6,10 @@ if [ -z $port ]; then
   echo "Supply port, defaulting to 443"
 fi
 
+mkdir -p pdfs
+echo "[]" > pdfs/hashes.json
+
 cd public/uploads
 ./clean.sh
-cd ../..
+cd ../../
 node index.js $port

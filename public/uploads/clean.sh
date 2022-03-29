@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # delete all view pages and images older than 3 days
-cd /home/cris/p2./public/uploads
+cd /home/cris/documentspark/public/uploads
 
 # old one
   # remove all files older than 3 days
@@ -15,7 +15,7 @@ find ./ -name 'file*' -type f -mmin +4319 -delete
 
 # delete all original documents older than 3 days
 
-cd /home/cris/p2./pdfs
+cd /home/cris/documentspark/pdfs
 
 # old one
   # remove all files older than 3 days
@@ -27,7 +27,7 @@ cd /home/cris/p2./pdfs
 find ./ -name 'file*' -type f -mmin +4319 -delete
 
 
-cd /home/cris/p2./
+cd /home/cris/documentspark
 
 # rebuild the hashes of the files that are left
 ./rebuild_hashes.js
