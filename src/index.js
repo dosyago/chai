@@ -35,7 +35,7 @@ try {
 }
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname,'public', 'uploads')),
+  destination: (req, file, cb) => cb(null, path.join(__dirname,'..', 'public', 'uploads')),
   filename: (req, file, cb) => {
     try {
       return cb(null, nextFileName(path.extname(file.originalname)))
