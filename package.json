@@ -1,11 +1,11 @@
 {
   "name": "documentspark",
-  "version": "1.6.0",
+  "version": "1.6.2",
   "description": "documentspark :: document -> picture_of_page[]",
   "main": "index.js",
   "scripts": {
     "start": "./scripts/run.sh",
-    "test": "nodemon index.js -- 8080"
+    "test": "nodemon ./src/index.js -- 8080"
   },
   "repository": {
     "type": "git",
