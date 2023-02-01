@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "./scripts/run.sh",
-    "test": "nodemon index.js -- 8080"
+    "test": "nodemon ./src/index.js -- 8080"
   },
   "repository": {
     "type": "git",
