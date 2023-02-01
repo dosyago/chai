@@ -11,11 +11,11 @@ const path = require('path');
 const os = require('os');
 const app = express();
 
-const SECRET = require('./secrets/key.js');
+const SECRET = require(path.join(__dirname, '..', 'secrets', 'key.js'));
 const MAX_FILE_DL_TIME = 147*1000; // time to allow a download before rejecting ~ 2.5 mins
 const WAIT_NEW_FILES_BEFORE_DISK_SYNC = 3;
-const PIDFILE = path.join(__dirname, 'pid.txt');
-const HASH_FILE = path.join(__dirname, 'pdfs', 'hashes.json');
+const PIDFILE = path.join(__dirname, '..', 'pid.txt');
+const HASH_FILE = path.join(__dirname, '..', 'pdfs', 'hashes.json');
 const jobs = {};
 const Files = new Map();
 const SSL_OPTS = {};
@@ -89,8 +89,8 @@ const download = async function(url, dest) {
 };
 const DEBUG = true;
 const PORT = process.env.PORT || (secure ? (process.argv[2] || 8080) : 8080);
-const uploadPath = path.join(__dirname, 'public', 'uploads');
-const CONVERTER = path.join(__dirname, 'scripts', 'convert.sh');
+const uploadPath = path.join(__dirname, '..', 'public', 'uploads');
+const CONVERTER = path.join(__dirname, '..', 'scripts', 'convert.sh');
 const VALID = /^\.[a-zA-Z][a-zA-Z0-9\-\_]{0,12}$/g;
 const upload = multer({storage});
 
