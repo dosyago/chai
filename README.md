@@ -60,6 +60,6 @@ You can try recompiling ImageMagick to have multicore support. I found this sign
 
 ## License
 
-Licensed under AGPL-3.0.
+Licensed under PolyForm Strict 1.0
 
-If you'd like to deploy this in your org without going open-source or for a for-profit project where youd want to release the source under AGPL-3.0 as well, write me (cris@dosycorp.com) about a license exemption.
+If you'd like to deploy this in your org without going open-source or for a for-profit project where youd want to include the source under something other conditions, write me (cris@dosycorp.com) about a license exemption.
