@@ -15,13 +15,22 @@ Converts a document to a picture of its pages. View a document from the internet
 ## Use it
 
 ```sh
-$ npm i documentspark@latest
-$ cd node_modules/documentspark
-$ ./setup.sh 
-$ ./restart.sh
+$ git clone https://github.com/dosyago/documentspark.git
+$ cd documentspark
+$ ./scripts/setup.sh 
+$ ./scripts/restart.sh
 ```
 
-If you have SSL certs in `$HOME/sslcerts/` these will be used, if not the server will run on HTTP. It will run under `pm2` and default to port `443`. You can supply a custom port with `npm start <PORT>`.
+Or:
+
+```sh
+$ npm i documentspark@latest
+$ cd node_modules/documentspark
+$ ./scripts/setup.sh 
+$ ./scripts/restart.sh
+```
+
+If you have SSL certs in `$HOME/sslcerts/` these will be used (including `mkcert` localhost certs!), if not the server will run on HTTP. It will run under `pm2` and default to port `443`. You can supply a custom port with `npm start <PORT>`.
 
 Navigate to `yourserver:your_port/secretpage-canneverbefound.html` to convert a document. You can input either a file, or a URL. It may not always be possible to obtain a document from the URL.
 

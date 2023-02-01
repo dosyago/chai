@@ -4,8 +4,8 @@ const hasha = require('hasha');
 const fs = require('fs');
 const path = require('path');
 
-const HASH_FILE = path.join(__dirname, 'pdfs', 'hashes.json');
-const FILES = path.join(__dirname, 'pdfs');
+const HASH_FILE = path.join(__dirname, '..', 'pdfs', 'hashes.json');
+const FILES = path.join(__dirname, '..', 'pdfs');
 const VIEW_PAGE = /^file.*$/;
 
 buildHashes();
