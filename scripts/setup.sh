@@ -1,5 +1,6 @@
 #!/bin/sh
 
+source ~/.nvm/nvm.sh
 
 OS=$(uname)
 if [ "$OS" = "Darwin" ]; then
