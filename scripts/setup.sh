@@ -18,6 +18,9 @@ else
   sudo mkdir -p /etc/ImageMagick
   sudo cp policy.xml /etc/ImageMagick/
   sudo cp policy.xml /etc/ImageMagick-*/
+  sudo apt-get update
+  sudo apt-get install libcap2-bin
+  sudo setcap 'cap_net_bind_service=+ep' $(command -v node)
 fi
 
 
@@ -29,4 +32,8 @@ fi
 npm i
 which pm2 || npm i -g pm2
 
+if [ ! -f ./secrets/key.js ]; then
+  echo "You need to fill in ./secrets/key.js to set your app secret."
+  exit 1
+fi
 
