@@ -31,7 +31,7 @@ try {
   });
   secure = true;
 } catch(e) {
-  console.warn(`No certs found`);
+  console.warn(`No certs found`, e);
 }
 
 const storage = multer.diskStorage({
@@ -230,14 +230,20 @@ app.use((err, req, res, next) => {
   res.redirect('/error.html');
 });
 
-(secure ? https : http).createServer(SSL_OPTS, app).listen(PORT, async err => {
-  await syncHashes(State.Files);
-  await savePID();
-  if ( err ) {
-    throw err;
-  }
-  console.log(JSON.stringify({listening:{port:PORT,at:new Date}}));
-});
+try {
+  (secure ? https : http).createServer(SSL_OPTS, app).listen(PORT, async err => {
+    if ( err ) {
+      console.warn(err);
+      throw err;
+    }
+    await syncHashes(State.Files);
+    await savePID();
+    console.log(JSON.stringify({listening:{port:PORT,at:new Date}}));
+  });
+} catch(e) {
+  console.warn(`Error creating server`, e);
+  process.exit(1);
+}
 
 process.on('exit', cleanup);
 process.on('error', cleanup);
