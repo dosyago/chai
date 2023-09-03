@@ -2,7 +2,7 @@
 
 count=$1
 #IFS=$'\n';
-base=https://secureview.isolation.site/uploads/
+base=https://secureview.dosyago.com/uploads/
 
 if [ -z $count ]; then
   count=10

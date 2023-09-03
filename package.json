@@ -1,11 +1,14 @@
 {
-  "name": "documentspark",
-  "version": "1.6.2",
+  "name": "@dosy-private/docspunk",
+  "private": true,
+  "version": "1.5.6",
   "description": "documentspark :: document -> picture_of_page[]",
   "main": "index.js",
   "scripts": {
-    "start": "./scripts/run-docspark.sh",
-    "test": "nodemon ./src/index.js -- 8080"
+    "start": "(pm2 delete run || :) && pm2 start ./scripts/run-docspark.sh && pm2 save && pm2 startup",
+    "test": "nodemon src/index.js -- 8080",
+    "prepublishOnly": "echo 'Do not publish this' && fail",
+    "postinstall": "bash ./scripts/setup.sh"
   },
   "repository": {
     "type": "git",
@@ -26,9 +29,10 @@
   },
   "dependencies": {
     "compression": "latest",
+    "exit-on-epipe": "latest",
     "express": "latest",
     "hasha": "latest",
     "multer": "latest"
   },
-  "license": "PolyForm Strict 1.0"
+  "license": "AGPL-3.0"
 }

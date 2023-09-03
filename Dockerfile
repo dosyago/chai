@@ -5,7 +5,7 @@ COPY package*.json ./
 COPY . .
 
 USER docker
-RUN ./scripts/nix_install_deps.sh
+RUN ./nix_install_deps.sh
 EXPOSE 8080
 
 CMD ["npm", "start", "8080"]
