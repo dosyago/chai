@@ -33,6 +33,9 @@
   
   header nav {
     flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   header div.download {
@@ -46,26 +49,79 @@
   header, button {
     font-size: 18pt;
   }
+
+  header button {
+  }
+
+  header button strong {
+    display: block;
+  }
+
+  header button strong.pop {
+
+  }
+
+  nav .zoomer {
+    cursor: zoom-in !important;
+  }
+
+  strong.flip {
+  }
+
+  #loading {
+    margin-top: 1.5rem;
+    cursor: wait !important;
+    text-align: center;
+  }
+
+  nav section {
+    display: flex;
+    align-items: center;
+  }
+
+  nav section > * {
+    margin: 0 0.15rem;
+  }
+
+  .download {
+    cursor: pointer !important;
+  }
+
+  .download a {
+    text-decoration: none;
+  }
+
+  .download a .link-text {
+    text-decoration: underline;
+  }
 </style>
 <header>
   <nav>
-    <button id=prev>Prev</button>
-    <button id=next>Next</button>
-    &nbsp;
-    <span id=pagenumber></span>
-    <button id=rotate>Rotate</button>
+    <section class=controls>
+      <button id=prev title="Previous page"> 
+        &lt;
+      </button>
+      <button id=next title="Next page">
+        &gt;
+      </button>
+      <button id=rotate title="Rotate page">
+        &circlearrowright;
+      </button>
+      <input type="range" id="resizeSlider" min="33" max="200" value="100" style="max-width: 30vw;" title="Zoom" class=zoomer>
+    </section>
+    <section class=document>
+      <span id=pagenumber></span>
+      <div class=download>
+        <a id=download-link title="Download original" rel=canonical download href=#download>
+          <span class=link-text>Download</span>
+          &#xFE3E;
+        </a>
+      </div>
+    </section>
   </nav>
-  <div style="margin-top: 20px;">
-    <label for="resizeSlider" style="font-size: 18px;">Zoom:</label>
-    <input type="range" id="resizeSlider" min="50" max="200" value="100" style="width: 300px;">
-  </div>
-  <div class=download>
-    <a id=download-link rel=canonical download href=#download>&#x1f5ce; Download the original</a>
-  </div>
 </header>
-<p>
-  <span id=loading>Converting...</span>
-  &nbsp;
+<p id=loading>
+  Converting...
 </p>
 <img id=page>
 <script>
