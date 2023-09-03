@@ -47,7 +47,7 @@
   }
 
   header, button {
-    font-size: 18pt;
+    font-size: 16pt;
   }
 
   header button {
@@ -142,7 +142,7 @@
   page.onload = () => {
     succeeded = true;
     loading.innerText = ''; 
-    pagenumber.innerText = `Page ${(pageNumber + 1)}`;
+    pagenumber.innerText = `page ${(pageNumber + 1)}`;
     page.onerror = checkFirstPage;
   }
   checkFirstPage();
