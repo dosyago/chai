@@ -332,7 +332,11 @@ async function syncHashes(map) {
 
   latestHashes = mergeMaps(hashFile, map);
 
-  await fs.promises.writeFile(HASH_FILE, JSON.stringify([...latestHashes.entries()]));
+  try {
+    await fs.promises.writeFile(HASH_FILE, JSON.stringify([...latestHashes.entries()]));
+  } catch(e) {
+    console.warn('write', e);
+  }
 
   State.Files = latestHashes;
   syncing = false;
