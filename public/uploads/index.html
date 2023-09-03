@@ -46,8 +46,12 @@
     font-size: smaller;
   }
 
-  header, button {
+  header, .controls {
     font-size: 16pt;
+  }
+
+  section.document * {
+    font-size: 14pt;
   }
 
   header button {
@@ -83,17 +87,57 @@
     margin: 0 0.15rem;
   }
 
+  #download-link {
+    display: inline-block;
+    margin-top: 3.5px;
+  }
+
   .download {
     cursor: pointer !important;
   }
 
   .download a {
     text-decoration: none;
+    color: dodgerblue;
   }
 
   .download a .link-text {
     text-decoration: underline;
   }
+
+  .download strong {
+    vertical-align: sub;
+  }
+
+  section.controls * {
+    font-size: 16pt;
+  }
+
+  button {
+    text-align: center;
+    color: dodgerblue;
+    font-weight: bold;
+  }
+
+  .controls span.rot {
+    transform: rotate(80deg) translate(0, -2px);
+    display: block;
+  }
+
+  nav {
+    padding: 0.5rem 0.5rem 0.5rem 0.25rem;
+  }
+
+  input[type="range"] {
+    margin-left: 0.45rem;
+    accent-color: dodgerblue;
+  }
+
+  ::-webkit-slider-runnable-track {
+    background: silver;
+    border-radius: 1rem;
+  }
+
 </style>
 <header>
   <nav>
@@ -105,7 +149,9 @@
         &gt;
       </button>
       <button id=rotate title="Rotate page">
-        &circlearrowright;
+        <span class=rot>
+          &circlearrowright;
+        </span>
       </button>
       <input type="range" id="resizeSlider" min="33" max="200" value="100" style="max-width: 30vw;" title="Zoom" class=zoomer>
     </section>
@@ -114,7 +160,7 @@
       <div class=download>
         <a id=download-link title="Download original" rel=canonical download href=#download>
           <span class=link-text>Download</span>
-          &#xFE3E;
+          <strong>&#xFE3E;</strong>
         </a>
       </div>
     </section>
