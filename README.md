@@ -12,6 +12,10 @@ The point was originally to allow people to view documents securely (such as ema
 
 The code is shared as something you can build upon and adapt to your uses in the open. It's not meant as a finished solution, it's meant as a starting point, something to give you ideas for how to implement your own version, or something to plug in to your own open-source work. The project was originally called "p2." for "PDF to ...", but it works on a wide range of source documents, including DOCX and (often but not always) XLSX, and so on. It doesn't work on HTML or TXT.
 
+## Pre-requisites
+
+We assume you have nvm installed to manage node versions. The current implementation assumes a Debian set up, but should also work on MacOS. I can't remember if there's any modifications required but I know it works on Mac, too.
+
 ## Use it
 
 ```sh
@@ -21,18 +25,11 @@ $ ./scripts/setup.sh
 $ ./scripts/restart.sh
 ```
 
-Or:
-
-```sh
-$ npm i documentspark@latest
-$ cd node_modules/documentspark
-$ ./scripts/setup.sh 
-$ ./scripts/restart.sh
-```
-
 If you have SSL certs in `$HOME/sslcerts/` these will be used (including `mkcert` localhost certs!), if not the server will run on HTTP. It will run under `pm2` and default to port `443`. You can supply a custom port with `npm start <PORT>`.
 
 Navigate to `yourserver:your_port/secretpage-canneverbefound.html` to convert a document. You can input either a file, or a URL. It may not always be possible to obtain a document from the URL.
+
+If you throw in `secret=<your secret>` as a URL parameter to that page, you will be able to convert. The secret needs to match the secret exported in `./secrets/key.js`.
 
 Document view pages are not protected by any authentication, they are simply chosen pseudo-randomly. You can modify the code to give document viewing pages longer, more securely random URLs. 
 

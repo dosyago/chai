@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source ~/.nvm/nvm.sh
+
 if [ ! -f ./secrets/key.js ]; then
   echo "You need to fill in ./secrets/key.js to set your app secret."
   exit 1
