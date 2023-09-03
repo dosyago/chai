@@ -5,6 +5,7 @@
 <style>
   :root {
     background: whitesmoke;
+    font-family: system-ui, Arial, Times;
   }
 
   body {
@@ -131,13 +132,45 @@
   input[type="range"] {
     margin-left: 0.45rem;
     accent-color: dodgerblue;
+    max-width: 30%;
   }
 
   ::-webkit-slider-runnable-track {
-    background: silver;
-    border-radius: 1rem;
+    background: whitesmoke;
+    border: 1px solid gray;
+    height: 0.5rem;
+    border-radius: 0.5rem;
   }
 
+  ::-webkit-slider-thumb {
+    transform: translate(0,-30%);
+    accent-color: dodgerblue;
+  }
+
+  ::-moz-range-track {
+    background: whitesmoke;
+    border: 1px solid gray;
+    height: 0.5rem;
+    border-radius: 0.5rem;
+  }
+
+  ::-moz-range-thumb {
+    background: dodgerblue;
+    border-radius: 1rem;
+    border-color: dodgerblue;
+    height: 1rem;
+    width: 1rem;
+  }
+
+  @media screen and (max-width: 375px) {
+    nav .link-text {
+      display: none;
+    }
+  }
+
+  :is(button, input, a):focus {
+    outline-color: dodgerblue;
+  }
 </style>
 <header>
   <nav>
@@ -167,7 +200,7 @@
   </nav>
 </header>
 <p id=loading>
-  Converting...
+  Converting&hellip;
 </p>
 <img id=page>
 <script>
@@ -220,7 +253,7 @@
     }
     pageNumber = 0;
     page.src = imgUrl(pageNumber);
-    loading.innerText = 'Converting...';
+    loading.innerHTML = 'Converting&hellip;';
   }
 
   setTimeout(() => {
@@ -253,5 +286,4 @@
       }
     });
   });
-
 </script>
