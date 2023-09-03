@@ -196,4 +196,16 @@
     const slider = document.getElementById("resizeSlider");
     slider.addEventListener("input", resizeImage);
   });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const downloadLink = document.getElementById("download-link"); // Replace with the actual ID of your Download anchor link
+
+    downloadLink.addEventListener("click", function(event) {
+      const userConfirmed = confirm("Are you sure? This file could harm your computer.");
+      if (!userConfirmed) {
+        event.preventDefault();
+      }
+    });
+  });
+
 </script>
