@@ -20,27 +20,11 @@
 
   header {
     position: sticky;
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: space-between;
     zoom: reset;
     top: 0;
     background: white;
     padding: 0.25em;
     box-shadow: 0 1px 1px silver;
-  }
-  
-  header nav {
-    flex-grow: 1;
-  }
-
-  header div.download {
-    text-align: right;
-  }
-
-  header div.download a {
-    font-size: smaller;
   }
 
   header, button {
@@ -48,16 +32,11 @@
   }
 </style>
 <header>
-  <nav>
-    <button id=prev>Prev</button>
-    <button id=next>Next</button>
-    &nbsp;
-    <span id=pagenumber></span>
-    <button id=rotate>Rotate</button>
-  </nav>
-  <div class=download>
-    <a id=download-link rel=canonical download href=#download>&#x1f5ce; Download the original</a>
-  </div>
+  <button id=prev>Prev</button>
+  <button id=next>Next</button>
+  &nbsp;
+  <span id=pagenumber></span>
+  <button id=rotate>Rotate</button>
 </header>
 <p>
   <span id=loading>Converting...</span>
@@ -67,10 +46,6 @@
 <script>
   const path = location.pathname;
   const imgUrl = i => path.replace(/\.html$/,`-${i.toString().padStart(4,'0')}.jpeg`);
-  const documentFileName = path.replace(/\.html$/, '');
-  console.log({documentFileName});
-  const anchor = document.querySelector('#download-link');
-  anchor.setAttribute('href', documentFileName);
   let noCram = false;
   let succeeded = false;
   let failed = false;

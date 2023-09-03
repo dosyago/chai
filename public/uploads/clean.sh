@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # delete all view pages and images older than 3 days
-cd /home/cris/docspunk/public/uploads
+cd ./public/uploads
 
 # old one
   # remove all files older than 3 days
@@ -15,7 +15,7 @@ find ./ -name 'file*' -type f -mmin +4319 -delete
 
 # delete all original documents older than 3 days
 
-cd /home/cris/docspunk/pdfs
+cd ../../pdfs
 
 # old one
   # remove all files older than 3 days
@@ -27,12 +27,10 @@ cd /home/cris/docspunk/pdfs
 find ./ -name 'file*' -type f -mmin +4319 -delete
 
 
-cd /home/cris/docspunk/
+cd ../
 
 # rebuild the hashes of the files that are left
 ./src/rebuild_hashes.js
 
 # notify the process that the hashes have been rebuilt
-sudo kill -s ALRM $(cat pid.txt) > /dev/null 2>&1
-
-
+sudo kill -s ALRM $(cat pid.txt) > /dev/null 2>&1 || echo "Could not notify process of restart. Perhaps it is not running?"
