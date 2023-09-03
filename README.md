@@ -1,57 +1,75 @@
-# [:sparkling_heart: DocumentSpark](https://github.com/dosyago/documentspark)
+# 🌈 DocumentSpark: Your Zero Trust Document Viewer! 🌟
 
-## Simple secure document viewing server. Used by BrowserBox Pro;
+Visit us on [GitHub](https://github.com/dosyago/documentspark)
 
-Converts a document to a picture of its pages. View a document from the internet without downloading or running it on your machine, and without needing a word processor, spreadsheet app, or PDF viewer installed. This provides content disarm and reconstruction, or CDR. Also known as [p2.](#), this code is deployed commercially by Dosyago in their [BrowserBox Pro cloud browser product](https://github.com/dosyago/BrowserBoxPro).
+## The Future of Secure Document Viewing is Here! 🎉
 
-# Description
+Convert documents into spectacular images for each page, and view them securely in your browser! No downloads, no third-party apps—just pure, joyful, **Zero Trust** goodness! Proudly part of the [BrowserBox Pro cloud browser product](https://github.com/dosyago/BrowserBoxPro) by Dosyago.
 
-This is a very simple server in NodeJS to accept a document upload (or a URL) and convert that document (using ImageMagick, LibreOffice and GhostScript) into a series of images, one for each page of the document.
+---
 
-The point was originally to allow people to view documents securely (such as email attachments) without needing to run nor download said document to their own devices. It was successful in doing that, but its use grew to becoming ad-hoc document hosting where people were attracted to the ability to access a page of a document, without needing to download the entire document.
+## 🌈 Why You'll Love DocumentSpark 🌈
 
-The code is shared as something you can build upon and adapt to your uses in the open. It's not meant as a finished solution, it's meant as a starting point, something to give you ideas for how to implement your own version, or something to plug in to your own open-source work. The project was originally called "p2." for "PDF to ...", but it works on a wide range of source documents, including DOCX and (often but not always) XLSX, and so on. It doesn't work on HTML or TXT.
+- **Zero Trust Security**: Your document stays with you, always! 🛡️
+- **Universal Formats**: PDF, DOC, XLSX—we speak all languages! 🌐
+- **High-Performance**: Get ready to be amazed by the speed! 🚀
+- **Open Source**: Built by the community, for the community! 💖
 
-## Pre-requisites
+---
 
-We assume you have nvm installed to manage node versions. The current implementation assumes a Debian set up, but should also work on MacOS. I can't remember if there's any modifications required but I know it works on Mac, too.
+## ✨ How the Magic Happens ✨
 
-Ensure you have at least 4 cores and 8 GB RAM on your VPS. This is because running the document to image conversion to high-DPI as we do (which makes it acceptable to view online), is computationally expensive. If you want to serve folks in reasonable time, you need some compute. Too little memory, and you will crash and the conversion process will not recover or complete. 
+1. **Send Us Your Document**: Upload a file or just drop a URL.
+2. **Transformation Time**: We convert it into a beautiful gallery of high-quality images. 🎨
+3. **Enjoy**: Open your browser to a vivid, scrollable display of your document. 🌠
 
-## Use it
+---
+
+## 🌟 SEO Keywords 🌟
+
+- Zero Trust Document Viewer
+- Secure PDF Viewer
+- Browser-based Document Viewer
+- Multi-Format Document Viewer
+
+---
+
+## 🚀 Quick Start Guide 🚀
 
 ```sh
-$ git clone https://github.com/dosyago/documentspark.git
-$ cd documentspark
-$ ./scripts/setup.sh 
-$ ./scripts/restart.sh
+# Clone the treasure!
+git clone https://github.com/dosyago/documentspark.git
+# Enter the magical kingdom
+cd documentspark
+# Set up the wizardry
+./scripts/setup.sh
+# Ignite the spark!
+./scripts/restart.sh
 ```
 
-## Key Usage Notes
+---
 
-If you have SSL certs in `$HOME/sslcerts/` these will be used (including `mkcert` localhost certs!), if not the server will run on HTTP port 8080. It will run under `pm2` and default to port `443` if certs are installed. You can supply a custom port with `npm start <PORT>`.
+## 🌠 Pro Tips and Tricks 🌠
 
-Navigate to `yourserver:your_port/secretpage-canneverbefound.html` to convert a document. You can input either a file, or a URL. It may not always be possible to obtain a document from the URL.
+- Got SSL certs? Place them in `$HOME/sslcerts/` and we'll go HTTPS! 🌐
+- Tweak the `secret=<your secret>` URL parameter for extra magical powers. 🌟
+- Document lifespan is 3 days by default, but feel free to change that in `/public/uploads/clean.sh`. 🕰️
 
-If you throw in `secret=<your secret>` as a URL parameter to that page, you will be able to convert. The secret needs to match the secret exported in `./secrets/key.js`.
+---
 
-Document view pages are not protected by any authentication, they are simply chosen pseudo-randomly. You can modify the code to give document viewing pages longer, more securely random URLs. 
+## 🎉 Turn It into an API 🎉
 
-By default, converted documents are cleaned out after 3 days. You can change this in `/public/uploads/clean.sh` which runs every few minutes and cleans any documents older than 4319 minutes (roughly 3 days). 
+Want more? Use the POST endpoint with a `secret=` parameter to authorize conversion via a secure HTTPS API.
 
-## Make it an API
+---
 
-There's a very simple "master key" secret parameter sent with the POST request. You can call this POST endpoint via a secure HTTPS API (using multitype/form encoding) and pass your custom `secret=` as a parameter to authorize the conversion. 
+## 🌈 System Requirements 🌈
 
-## System Requirements
+We recommend a beefy machine with at least 4 cores and 8 GB RAM for a spellbinding experience.
 
-You need a beefy machine. 4 cores, with 8 GB RAM for most documents. But more is better. Smaller machines will routinely run out of memory or take a long time when running the `libreoffice`, `imagemagick` and `gs` jobs.
+---
 
-## Improving perf
-
-You can try recompiling ImageMagick to have multicore support. I found this significantly improves performance. There is an included script to build ImageMagick for multicore in the scripts directory.
-
-## Thanks to\*
+## 🌟 Special Thanks 🌟
 
 - [ImageMagick](https://github.com/ImageMagick/ImageMagick)
 - [Ghostscript](https://git.ghostscript.com/)
@@ -59,8 +77,15 @@ You can try recompiling ImageMagick to have multicore support. I found this sign
 
 *\*No affiliation*
 
-## License
+---
 
-Licensed under  Apache-2.0
+## 📜 License 📜
 
-If you'd like to deploy this in your org without going open-source or for a for-profit project where youd want to include the source under something other conditions, write us (hello@dosyago.com) about a license exemption.
+AGPL-3.0. For custom licensing options, email us at [hello@dosyago.com](mailto:hello@dosyago.com).
+
+---
+
+**Ignite the Spark in Your Documents with DocumentSpark! 🌈**
+
+---
+
