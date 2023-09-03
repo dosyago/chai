@@ -4,8 +4,8 @@
   "description": "documentspark :: document -> picture_of_page[]",
   "main": "index.js",
   "scripts": {
-    "start": "./scripts/run-docspark.sh",
-    "test": "nodemon ./src/index.js -- 8080"
+    "start": "(pm2 delete run-docspark || true) && ./scripts/run-docspark.sh",
+    "test": "node --watch ./src/index.js -- 8080"
   },
   "repository": {
     "type": "git",
@@ -20,15 +20,12 @@
     "url": "https://github.com/dosyago/documentspark/issues"
   },
   "homepage": "https://github.com/dosyago/documentspark#readme",
-  "devDependencies": {
-    "nodemon": "latest",
-    "pm2": "latest"
-  },
   "dependencies": {
+    "pm2": "latest",
     "compression": "latest",
     "express": "latest",
     "hasha": "latest",
     "multer": "latest"
   },
-  "license": "PolyForm Strict 1.0"
+  "license": "AGPL-3.0"
 }
