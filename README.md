@@ -16,6 +16,8 @@ The code is shared as something you can build upon and adapt to your uses in the
 
 We assume you have nvm installed to manage node versions. The current implementation assumes a Debian set up, but should also work on MacOS. I can't remember if there's any modifications required but I know it works on Mac, too.
 
+Ensure you have at least 4 cores and 8 GB RAM on your VPS. This is because running the document to image conversion to high-DPI as we do (which makes it acceptable to view online), is computationally expensive. If you want to serve folks in reasonable time, you need some compute. Too little memory, and you will crash and the conversion process will not recover or complete. 
+
 ## Use it
 
 ```sh
@@ -25,7 +27,9 @@ $ ./scripts/setup.sh
 $ ./scripts/restart.sh
 ```
 
-If you have SSL certs in `$HOME/sslcerts/` these will be used (including `mkcert` localhost certs!), if not the server will run on HTTP. It will run under `pm2` and default to port `443`. You can supply a custom port with `npm start <PORT>`.
+## Key Usage Notes
+
+If you have SSL certs in `$HOME/sslcerts/` these will be used (including `mkcert` localhost certs!), if not the server will run on HTTP port 8080. It will run under `pm2` and default to port `443` if certs are installed. You can supply a custom port with `npm start <PORT>`.
 
 Navigate to `yourserver:your_port/secretpage-canneverbefound.html` to convert a document. You can input either a file, or a URL. It may not always be possible to obtain a document from the URL.
 
@@ -45,7 +49,7 @@ You need a beefy machine. 4 cores, with 8 GB RAM for most documents. But more is
 
 ## Improving perf
 
-You can try recompiling ImageMagick to have multicore support. I found this significantly improves performance.
+You can try recompiling ImageMagick to have multicore support. I found this significantly improves performance. There is an included script to build ImageMagick for multicore in the scripts directory.
 
 ## Thanks to\*
 

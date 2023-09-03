@@ -8,16 +8,10 @@ if [ ! -f ./secrets/key.js ]; then
 fi
 
 pm2=$(which pm2)
-sudo=""
 
-if command -v sudo; then
-  sudo="sudo"
-fi
-
-
-$sudo $pm2 delete run-docspark
-$sudo $pm2 stop ./scripts/run-docspark.sh
-$sudo killall node npm
+$pm2 delete run-docspark
+$pm2 stop ./scripts/run-docspark.sh
+killall node npm
 ./src/rebuild_hashes.js
-$sudo $pm2 start ./scripts/run-docspark.sh
-$sudo $pm2 logs run-docspark
+$pm2 start ./scripts/run-docspark.sh
+$pm2 logs run-docspark
