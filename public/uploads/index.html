@@ -55,6 +55,10 @@
     <span id=pagenumber></span>
     <button id=rotate>Rotate</button>
   </nav>
+  <div style="margin-top: 20px;">
+    <label for="resizeSlider" style="font-size: 18px;">Zoom:</label>
+    <input type="range" id="resizeSlider" min="50" max="200" value="100" style="width: 300px;">
+  </div>
   <div class=download>
     <a id=download-link rel=canonical download href=#download>&#x1f5ce; Download the original</a>
   </div>
@@ -122,4 +126,18 @@
       failed = true;
     }
   }, 1000*60*10);
+
+    // Function to resize image based on slider value
+  function resizeImage() {
+    const slider = document.getElementById("resizeSlider");
+    const image = document.getElementById("page");
+    const zoomLevel = slider.value;
+    image.style.width = zoomLevel + "%";
+  }
+
+  // Add event listener to the slider
+  document.addEventListener("DOMContentLoaded", function() {
+    const slider = document.getElementById("resizeSlider");
+    slider.addEventListener("input", resizeImage);
+  });
 </script>
