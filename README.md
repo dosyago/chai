@@ -47,6 +47,8 @@ cd documentspark
 ./scripts/restart.sh
 ```
 
+*If you just want to run the server temporarily, you can hit `npm start` instead of the `pm2`-using `./scripts/restart.sh`*
+
 ---
 
 ## 🌠 Pro Tips and Tricks 🌠
