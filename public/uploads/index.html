@@ -201,7 +201,7 @@
     const downloadLink = document.getElementById("download-link"); // Replace with the actual ID of your Download anchor link
 
     downloadLink.addEventListener("click", function(event) {
-      const userConfirmed = confirm("Are you sure? This file could harm your computer.");
+      const userConfirmed = confirm("This file could harm your computer. Are you sure you want to download?");
       if (!userConfirmed) {
         event.preventDefault();
       }
