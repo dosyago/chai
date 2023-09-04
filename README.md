@@ -1,4 +1,4 @@
-# 🌈 DocumentSpark: Your Zero Trust Document Viewer! 🌟
+# 🌈 Chai: Your Zero Trust Document Viewer! 🌟
 
 Visit us on [GitHub](https://github.com/dosyago/documentspark)
 
@@ -8,7 +8,7 @@ Convert documents into spectacular images for each page, and view them securely 
 
 ---
 
-## 🌈 Why You'll Love DocumentSpark 🌈
+## 🌈 Why You'll Love Chai 🌈
 
 - **Zero Trust Security**: Your document stays with you, always! 🛡️
 - **Universal Formats**: PDF, DOC, XLSX—we speak all languages! 🌐
@@ -38,9 +38,9 @@ Convert documents into spectacular images for each page, and view them securely 
 
 ```sh
 # Clone the treasure!
-git clone https://github.com/dosyago/documentspark.git
+git clone https://github.com/dosyago/chai.git
 # Enter the magical kingdom
-cd documentspark
+cd chai
 # Set up the wizardry
 ./scripts/setup.sh
 # Ignite the spark!
@@ -87,7 +87,7 @@ AGPL-3.0. For custom licensing options, email us at [hello@dosyago.com](mailto:h
 
 ---
 
-**Ignite the Spark in Your Documents with DocumentSpark! 🌈**
+**Enjoy your Documents Responsibly with Chai! 🌈**
 
 ---
 
