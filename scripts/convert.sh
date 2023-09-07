@@ -39,56 +39,67 @@ convert_to_pdf() {
 
   pandoc "${options[@]}" "$input_file" -o "$output_file"
 }
+
+convert_via_latex() {
+  local input_file="$1"
+  local output_file="$2"
+
+  latex=$(mktemp -d)
+  cp "$input_file" "${latex}/"
+  cat <<TAO > "$latex/file.tex"
+\documentclass{article}
+\usepackage[left=2cm,right=1cm,top=2cm,bottom=2cm]{geometry} % Adjust the global margin
+\usepackage{listings}
+\usepackage{beramono}
+\usepackage[T1]{fontenc}
+
+\lstset{%
+  language={},%
+  basicstyle=\ttfamily,%
+  linewidth=19cm,%
+  breaklines=true,%
+  breakatwhitespace=false,%
+  texcl=false,%
+  literate={\\\}{{\textbackslash}}1
+}
+
+\begin{document}
+\pagestyle{empty}  % Remove page numbers
+
+\lstinputlisting{"$input_file"}
+
+\end{document}
+TAO
+  pdflatex --output-directory "$latex" file.tex 1>&2
+  mv "${latex}/file.pdf" "${output_file}"
+}
+
 convert_to_pdf_if_needed() {
   # Extract the file extension
   file_extension="${1##*.}"
 
+  echo "File ext: ${file_extension}" >&2
+
   if [ "$file_extension" = "$1" ]; then
     file_extension=""
   fi
+
+  iconv -c -t utf-8//IGNORE "$1"  | sed 's/[^[:print:]\t]//g' > "${1}.utf8"
+  mv "${1}.utf8" "$1"
 
   # Output file name (same as input but with .pdf extension)
   output_file="${1%.*}.pdf"
 
   # Convert files based on their extension
   case "$file_extension" in
-    "json")
-      echo "Converting JSON to PDF..." >&2
-      options_array=(--from=json $pandoc_options)
-      convert_to_pdf "$1" "$output_file" "${options_array[@]}"
-      ;;
     "rst")
       echo "Converting RST to PDF..." >&2
       options_array=(--from=rst $pandoc_options)
       convert_to_pdf "$1" "$output_file" "${options_array[@]}"
       ;;
-    "conf"|"yaml"|"sh"|"text"|"txt"|"c"|"js"|"cpp"|"h"|"tpp"|"hpp"|"py"|"pl"|"m"|"java"|"go"|"cjs"|"mjs"|"css"|"")
-      echo "Converting TXT to PDF (via latex listings in Bera Mono)..." >&2
-      latex=$(mktemp -d)
-      cat <<TAO > "$latex/file.tex"
-\documentclass{article}
-\usepackage[left=2cm,right=1cm,top=2cm,bottom=2cm]{geometry} % Adjust the global margin
-\usepackage{listings}
-\usepackage{beramono}
-
-\lstset{
-  language={},
-  basicstyle=\ttfamily\large,
-  linewidth=40cm,
-  breaklines=true,                 % Enable line breaking
-  breakatwhitespace=false          % Break also at non-white space characters if required
-}
-
-\begin{document}
-\pagestyle{empty}  % Remove page numbers
-
-\lstinputlisting{"$1"}
-
-\end{document}
-TAO
-      pdflatex --output-directory "$latex" file.tex 1>&2
-      mv "${latex}/file.pdf" "${output_file}" 
-      rm -rf "$latex"
+    "json"|"conf"|"yaml"|"sh"|"text"|"txt"|"c"|"js"|"cpp"|"h"|"tpp"|"hpp"|"py"|"pl"|"m"|"java"|"go"|"cjs"|"mjs"|"css"|"")
+      echo "Converting Text files to PDF via LaTeX..." >&2
+      convert_via_latex "$1" "${1%.*}.pdf"
       ;;
     "me"|"md")
       echo "Converting Markdown (GFM) to PDF..." >&2
@@ -101,8 +112,8 @@ TAO
       convert_to_pdf "$1" "$output_file" "${options_array[@]}"
       ;;
     *)
-      echo "File doesn't need conversion to PDF." >&2
-      output_file="$1"
+      echo "Converting unknown types to PDF via LaTeX..." >&2
+      convert_via_latex "$1" "${1%.*}.pdf"
       ;;
   esac
   # Return the output file name (either the original or the converted PDF)
@@ -112,6 +123,11 @@ TAO
 # Main Script Execution
 converted_file=$(convert_to_pdf_if_needed "$1")
 cp "$base/index.html" "$1.html"
+
+echo "converted file: $converted_file"
+echo "format: $format"
+echo "1: $1"
+echo "base: $base"
 
 convert -verbose -density 120 -background ivory -alpha remove -alpha off -quality 75% -strip -interlace Plane "${converted_file}" +adjoin "${1}-%04d.${format}" || (mutool draw -i -o "${1}-%04d.${format}" "${converted_file}" && "$base/../../scripts/rename_1_based.sh" "${1}" "$format")
 
