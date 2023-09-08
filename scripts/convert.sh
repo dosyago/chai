@@ -112,7 +112,7 @@ convert_to_pdf_if_needed() {
       echo "Converting RST to PDF..." >&2
       options_array=(--from=rst $pandoc_options)
 
-      iconv -c -t utf-8//IGNORE "$1"  | sed 's/[^[:print:]\t]//g' > "${1}.utf8"
+      iconv -c -t utf-8//IGNORE "$1"  | awk '{gsub(/[^[:print:]\t]/, ""); print}' > "${1}.utf8"
       mv "${1}.utf8" "$1"
 
       convert_to_pdf "$1" "$output_file" "${options_array[@]}"
@@ -120,7 +120,7 @@ convert_to_pdf_if_needed() {
     "json"|"conf"|"yaml"|"sh"|"text"|"txt"|"c"|"js"|"cpp"|"h"|"tpp"|"hpp"|"py"|"pl"|"m"|"java"|"go"|"cjs"|"mjs"|"css"|"")
       echo "Converting Text files to PDF via LaTeX..." >&2
 
-      iconv -c -t utf-8//IGNORE "$1"  | sed 's/[^[:print:]\t]//g' > "${1}.utf8"
+      iconv -c -t utf-8//IGNORE "$1"  | awk '{gsub(/[^[:print:]\t]/, ""); print}' > "${1}.utf8"
       mv "${1}.utf8" "$1"
 
       convert_via_latex "$1" "${1%.*}.pdf"
@@ -129,7 +129,7 @@ convert_to_pdf_if_needed() {
       echo "Converting Markdown (GFM) to PDF..." >&2
       options_array=(--from=gfm $pandoc_options)
 
-      iconv -c -t utf-8//IGNORE "$1"  | sed 's/[^[:print:]\t]//g' > "${1}.utf8"
+      iconv -c -t utf-8//IGNORE "$1"  | awk '{gsub(/[^[:print:]\t]/, ""); print}' > "${1}.utf8"
       mv "${1}.utf8" "$1"
 
       convert_to_pdf "$1" "$output_file" "${options_array[@]}"
@@ -141,7 +141,7 @@ convert_to_pdf_if_needed() {
     *)
       echo "Converting unknown types to PDF via LaTeX..." >&2
 
-      iconv -c -t utf-8//IGNORE "$1"  | sed 's/[^[:print:]\t]//g' > "${1}.utf8"
+      iconv -c -t utf-8//IGNORE "$1"  | awk '{gsub(/[^[:print:]\t]/, ""); print}' > "${1}.utf8"
       mv "${1}.utf8" "$1"
 
       convert_via_latex "$1" "${1%.*}.pdf"
