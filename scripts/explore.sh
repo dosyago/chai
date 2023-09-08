@@ -2,6 +2,15 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+# Cleanup and error message in case of unexpected errors
+handle_error() {
+  echo "An unexpected error occurred." >&2
+  # Custom cleanup code here
+  exit 1
+}
+
+trap 'handle_error' ERR
+
 # Default environment variable values
 : "${MAX_ARCHIVE_SIZE:=104857600}"
 : "${MAX_EXECUTION_TIME:=30}"
@@ -35,33 +44,41 @@ decompress_anything() {
   case "$mime_type" in
     "application/gzip")
       install_guard "gzip"
+      gzip -t "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
       tar xzf "$archive_path" -C "$extraction_directory"
       ;;
     "application/x-bzip2")
       install_guard "bzip2"
+      bzip2 -t "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
       tar xjf "$archive_path" -C "$extraction_directory"
       ;;
     "application/zip")
       install_guard "unzip"
+      unzip -tq "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
       unzip -d "$extraction_directory" "$archive_path"
       ;;
     "application/x-xz")
       install_guard "xz-utils"
+      xz -t "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
       tar xJf "$archive_path" -C "$extraction_directory"
       ;;
     "application/x-lzma")
       install_guard "lzma"
+      lzma -t "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
       tar --lzma -xf "$archive_path" -C "$extraction_directory"
       ;;
     "application/x-lz4")
       install_guard "lz4"
+      lz4 -t "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
       tar --lz4 -xf "$archive_path" -C "$extraction_directory"
       ;;
     "application/x-rar")
       install_guard "unrar"
+      unrar t "$archive_path" >/dev/null 2>&1 || { echo "Error: Archive integrity check failed."; exit 1; }
       unrar x "$archive_path" "$extraction_directory"
       ;;
     "application/x-tar")
+      tar -tf "$archive_path" >/dev/null 2>&1 || { echo "Error: Archive integrity check failed."; exit 1; }
       tar xf "$archive_path" -C "$extraction_directory"
       ;;
     *)
@@ -110,7 +127,7 @@ extract_securely() {
 
 # Verify that an archive file argument is provided
 if [[ $# -eq 0 ]]; then
-  echo "Usage: $0 <path_to_archive_file>"
+  echo "Usage: $0 <path_to_archive_file>" >&2
   exit 1
 fi
 
