@@ -123,6 +123,7 @@
     Host: 'localhost'
   };
 
+  app.use(compression());
   app.use(express.static('public', { 
     maxAge: 31557600,
     dotfiles: 'allow',
@@ -136,11 +137,17 @@
           },
           sendURL: false,
         });
-        res.redirect(301, redirTo);
+        console.log("redirTo", redirTo);
+        if ( res.headersSent ) {
+          console.log("Can not redirect: headers already sent", res);
+        } else {
+          res.setHeader('Location', redirTo);
+          res.statusCode = 302; // or 301 for permanent
+          res.end();
+        }
       }
-    } 
+    }, 
   }));
-  app.use(compression());
   app.use((req, res, next) => {
     State.Protocol = req.protocol;
     State.Host = req.get('host');
@@ -218,7 +225,6 @@
 
   function convertIt({res, pdf, sendURL = true}) {
     // hash check for duplicate files
-      console.log({sendURL});
       const hash = hasha.fromFileSync(pdf.path);
       let viewUrl;
       let mime;
@@ -251,11 +257,14 @@
 
     // job start
     let subshell;
+    let SCRIPT;
 
     if ( mime && ARCHIVES.has(mime) ) {
-      subshell = spawn(EXPLORER, [pdf.path]);
+      SCRIPT = EXPLORER;
+      subshell = spawn(SCRIPT, [pdf.path]);
     } else {
-      subshell = spawn(CONVERTER, [pdf.path, uploadPath, 'jpeg']);
+      SCRIPT = CONVERTER;
+      subshell = spawn(SCRIPT, [pdf.path, uploadPath, 'jpeg']);
     }
 
     // subshell clean up handling
@@ -277,10 +286,10 @@
       });
       subshell.on('close', (code) => {
         if ( code != 0 ) {
-          console.warn(`${CONVERTER} exited with code ${code}`);
-          logErr(`${CONVERTER} exited with code ${code}`);
+          console.warn(`${SCRIPT} exited with code ${code}`);
+          logErr(`${SCRIPT} exited with code ${code}`);
         } else {
-          console.log(`${CONVERTER} exited`);
+          console.log(`${SCRIPT} exited`);
         }
       });
 
