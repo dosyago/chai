@@ -14,7 +14,7 @@ trap 'handle_error' ERR
 # Default environment variable values
 : "${MAX_ARCHIVE_SIZE:=104857600}"
 : "${MAX_EXECUTION_TIME:=30}"
-: "${EXTRACTION_ROOT:=/tmp/extraction_root}"
+: "${EXTRACTION_ROOT:=./public/uploads/archives}"
 
 # Function to check and install required utilities
 install_guard() {
@@ -105,14 +105,16 @@ extract_securely() {
   local mime_type=$(file --mime-type -b "$archive_path")
 
   # Create a unique extraction directory for this UUID
-  local extraction_directory="$EXTRACTION_ROOT/dir${uuid}"
+  local extraction_directory="$EXTRACTION_ROOT/${file_name}/"
   mkdir -p "$extraction_directory"
 
   # Copy the original archive to the unique extraction directory
   cp "$archive_path" "$extraction_directory"
 
   # Start the decompression and catch timeout failures
-  if ! timeout "$MAX_EXECUTION_TIME" decompress_anything "$archive_path" "$mime_type" "$extraction_directory"; then
+  export -f decompress_anything
+  export -f install_guard
+  if ! timeout "$MAX_EXECUTION_TIME" bash -c "decompress_anything \"$archive_path\" \"$mime_type\" \"$extraction_directory\""; then
     echo "Error: Decompression operation timed out." >&2
     exit 1
   fi

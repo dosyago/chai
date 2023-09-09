@@ -1,6 +1,7 @@
 const compression = require('compression');
 const hasha = require('hasha');
 const fs = require('fs');
+const exploreDirectories = require('serve-index');
 const child_process = require('child_process');
 const {
   spawn,
@@ -120,7 +121,18 @@ const State = {
 };
 
 app.use(compression());
-app.use(express.static('public', { maxAge: 31557600 }));
+app.use(express.static('public', { 
+  maxAge: 31557600,
+  dotfiles: 'allow',
+  setHeaders: (res, path, stat) => {
+    console.log(path, stat);
+  }
+}));
+app.use('/uploads/archives', exploreDirectories(path.resolve('public', 'uploads', 'archives'), {
+  icons: true,
+  dot: true,
+  view: 'details'
+}))
 
 app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res) => {
   let {file:pdf} = req;
