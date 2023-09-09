@@ -1,7 +1,11 @@
 const compression = require('compression');
 const hasha = require('hasha');
 const fs = require('fs');
-const spawn = require('child_process').spawn;
+const child_process = require('child_process');
+const {
+  spawn,
+  execSync
+} = child_process;
 const express = require('express');
 const https = require('https');
 const http = require('http');
@@ -91,10 +95,23 @@ const download = async function(url, dest) {
   });
   return result;
 };
-const DEBUG = true;
+const DEBUG = {
+  showHash: false
+};
 const PORT = process.env.PORT || (secure ? (process.argv[2] || 8080) : 8080);
 const uploadPath = path.join(__dirname, '..', 'public', 'uploads');
 const CONVERTER = path.join(__dirname, '..', 'scripts', 'convert.sh');
+const EXPLORER = path.join(__dirname, '..', 'scripts', 'explore.sh');
+const ARCHIVES = new Set([
+  "application/gzip",
+  "application/x-bzip2",
+  "application/zip",
+  "application/x-xz",
+  "application/x-lzma",
+  "application/x-lz4",
+  "application/x-rar",
+  "application/x-tar",
+]);
 const VALID = /^\.[a-zA-Z][a-zA-Z0-9\-\_]{0,12}$|^$/g;
 const upload = multer({storage});
 
@@ -164,8 +181,20 @@ app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res)
   if ( pdf ) { 
     // hash check for duplicate files
       const hash = await hasha.fromFile(pdf.path);
-      const viewUrl = `${req.protocol}://${req.get('host')}/uploads/${pdf.filename}.html`;
-      console.log({hash});
+      let viewUrl;
+      let mime;
+      try {
+        mime = execSync(`file --mime-type -b "${pdf.path}"`).toString().trim();
+      } catch(e) {
+        console.warn(`Error getting mime type`, e);
+        mime = false;
+      }
+      if ( mime && ARCHIVES.has(mime) ) {
+        viewUrl = `${req.protocol}://${req.get('host')}/uploads/archives/${pdf.filename}/`;
+      } else {
+        viewUrl = `${req.protocol}://${req.get('host')}/uploads/${pdf.filename}.html`;
+      }
+      DEBUG.showHash && console.log({hash});
       if ( State.Files.has(hash) ) {
         const existingViewUrl = State.Files.get(hash);
         log(req, {note:'File exists', hash, existingViewUrl});
@@ -179,7 +208,13 @@ app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res)
       }
 
     // job start
-    const subshell = spawn(CONVERTER, [pdf.path, uploadPath, 'jpeg']);
+    let subshell;
+
+    if ( mime && ARCHIVES.has(mime) ) {
+      subshell = spawn(EXPLORER, [pdf.path]);
+    } else {
+      subshell = spawn(CONVERTER, [pdf.path, uploadPath, 'jpeg']);
+    }
 
     // subshell clean up handling
     {

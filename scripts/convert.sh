@@ -152,6 +152,8 @@ convert_to_pdf_if_needed() {
 }
 
 # Main Script Execution
+
+
 cp "$base/index.html" "$1.html"
 converted_file=$(convert_to_pdf_if_needed "$1")
 
