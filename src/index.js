@@ -22,8 +22,10 @@
   const WAIT_NEW_FILES_BEFORE_DISK_SYNC = 3;
   const PIDFILE = Path.join(__dirname, '..', 'pid.txt');
   const HASH_FILE = Path.join(__dirname, '..', 'pdfs', 'hashes.json');
+  const LINK_FILE = Path.join(__dirname, '..', 'pdfs', 'links.json');
   const jobs = {};
   const Files = new Map();
+  const Links = new Map();
   const SSL_OPTS = {};
   let jobid = 1;
   let newFiles = 0;
@@ -41,7 +43,7 @@
   }
 
   const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, Path.join(__dirname,'..', 'public', 'uploads')),
+    destination: (req, file, cb) => cb(null, uploadPath),
     filename: (req, file, cb) => {
       try {
         return cb(null, nextFileName(Path.extname(file.originalname)))
@@ -119,45 +121,57 @@
 
   const State = {
     Files,
+    Links,
     Protocol: 'https',
     Host: 'localhost'
   };
 
   app.use(compression());
-  app.use(express.static('public', { 
-    maxAge: 31557600,
-    dotfiles: 'allow',
-    setHeaders: (res, path, stat) => {
-      if ( path.includes('/uploads/archives/file') ) {
-        const redirTo = convertIt({
-          res, 
-          pdf: {
-            path,
-            filename: Path.basename(path),
-          },
-          sendURL: false,
-        });
-        console.log("redirTo", redirTo);
-        if ( res.headersSent ) {
-          console.log("Can not redirect: headers already sent", res);
-        } else {
-          res.setHeader('Location', redirTo);
-          res.statusCode = 302; // or 301 for permanent
-          res.end();
-        }
-      }
-    }, 
-  }));
+
   app.use((req, res, next) => {
     State.Protocol = req.protocol;
     State.Host = req.get('host');
     next();
   });
-  app.use('/uploads/archives', exploreDirectories(Path.resolve('public', 'uploads', 'archives'), {
+
+  app.use(express.static('public', { 
+    maxAge: 31557600,
+  }));
+
+  app.use('/archives', exploreDirectories(Path.resolve('archives'), {
     icons: true,
     dot: true,
     view: 'details'
   }))
+
+  app.get('/archives/file:uuid/*', (req, res) => {
+
+    const pathElements = req.path.split(/\//g).filter(e => e.length);
+    const path = Path.resolve(...pathElements);
+    let newPath;
+    let newFilename;
+    if ( !State.Links.has(path) ) {
+      const filename = Path.basename(path);
+      newFilename = nextFileName(Path.extname(filename));
+      newPath = Path.join(uploadPath, newFilename);
+      fs.linkSync(path, newPath);
+      State.Links.set(path, newPath);
+      syncHashes(State.Files, State.Links);
+    } else {
+      newPath = State.Links.get(path);
+      newFilename = Path.basename(newPath);
+    }
+    const pdf = {
+      path: newPath,
+      filename: newFilename,
+    }
+    const redirTo = convertIt({
+      res, 
+      pdf,
+      sendURL: false,
+    });
+    res.redirect(301, redirTo);
+  });
 
   app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res) => {
     let {file:pdf} = req;
@@ -235,7 +249,7 @@
         mime = false;
       }
       if ( mime && ARCHIVES.has(mime) ) {
-        viewUrl = `${State.Protocol}://${State.Host}/uploads/archives/${pdf.filename}/`;
+        viewUrl = `${State.Protocol}://${State.Host}/archives/${pdf.filename}/`;
       } else {
         viewUrl = `${State.Protocol}://${State.Host}/uploads/${pdf.filename}.html`;
       }
@@ -251,7 +265,7 @@
         newFiles += 1;
         State.Files.set(hash, viewUrl);
         if ( newFiles % WAIT_NEW_FILES_BEFORE_DISK_SYNC == 0 ) {
-          syncHashes(State.Files);
+          syncHashes(State.Files, State.Links);
         }
       }
 
@@ -264,6 +278,7 @@
       subshell = spawn(SCRIPT, [pdf.path]);
     } else {
       SCRIPT = CONVERTER;
+      fs.copyFileSync(Path.join(uploadPath, 'index.html'), Path.join(uploadPath, `${Path.basename(pdf.path)}.html`));
       subshell = spawn(SCRIPT, [pdf.path, uploadPath, 'jpeg']);
     }
 
@@ -326,7 +341,7 @@
         console.warn(err);
         throw err;
       }
-      await syncHashes(State.Files);
+      await syncHashes(State.Files, State.Links);
       await savePID();
       console.log(JSON.stringify({listening:{port:PORT,at:new Date}}));
     });
@@ -343,7 +358,9 @@
   process.on('SIGALRM', async () => {
     console.log('Got sig child resetting Files');
     const hashFile = await fs.promises.readFile(HASH_FILE);
+    const linkFile = await fs.promises.readFile(LINK_FILE);
     State.Files = new Map(JSON.parse(hashFile));
+    State.Links = new Map(JSON.parse(linkFile));
   });
 
   function cleanup(...args) {
@@ -412,13 +429,14 @@
     fs.appendFileSync('log', JSON.stringify(data)+'\n');
   }
 
-  async function syncHashes(map) {
+  async function syncHashes(hashesMap, linksMap) {
     if ( syncing ) {
       return;
     }
     syncing = true;
    
     let hashFile;
+    let linkFile;
     try {
       hashFile = await fs.promises.readFile(HASH_FILE); 
       hashFile = new Map(JSON.parse(hashFile)); 
@@ -426,8 +444,16 @@
       console.warn(e);
       hashFile = new Map();
     }
+    try {
+      linkFile = await fs.promises.readFile(LINK_FILE); 
+      linkFile = new Map(JSON.parse(linkFile)); 
+    } catch(e) {
+      console.warn(e);
+      linkFile = new Map();
+    }
 
-    latestHashes = mergeMaps(hashFile, map);
+    let latestHashes = mergeMaps(hashFile, hashesMap);
+    let latestLinks = mergeMaps(linkFile, linksMap);
 
     try {
       await fs.promises.writeFile(HASH_FILE, JSON.stringify([...latestHashes.entries()]));
@@ -435,7 +461,14 @@
       console.warn('write', e);
     }
 
+    try {
+      await fs.promises.writeFile(LINK_FILE, JSON.stringify([...latestLinks.entries()]));
+    } catch(e) {
+      console.warn('write', e);
+    }
+
     State.Files = latestHashes;
+    State.Links = latestLinks;
     syncing = false;
   }
 

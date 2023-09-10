@@ -1,12 +1,9 @@
 #!/bin/sh
 
-# Check if xelatex is installed and set Pandoc options accordingly
-if command -v xelatex > /dev/null 2>&1; then
-  pandoc_options="--pdf-engine=xelatex"
-else
-  echo "xelatex is not installed, proceeding without it." >&2
-  pandoc_options=""
-fi
+echo "$1"
+
+base="$2"
+format="$3"
 
 # Verify if a file path is provided
 if [ -z "$1" ]; then
@@ -20,15 +17,12 @@ if [ ! -f "$1" ]; then
   exit 1
 fi
 
-echo "$1"
-
-base="$2"
-format="$3"
-
 # Set default format to png if none is provided
 if [ -z "$format" ]; then
   format="png"
 fi
+
+#cp "$base/index.html" "$1.html"
 
 convert_to_pdf() {
   local input_file="$1"
@@ -92,6 +86,7 @@ convert_via_libreoffice() {
 convert_to_pdf_if_needed() {
   # Extract the file extension
   file_extension="${1##*.}"
+  pandoc_options=""
 
   echo "File ext: ${file_extension}" >&2
 
@@ -110,6 +105,15 @@ convert_to_pdf_if_needed() {
       ;;
     "rst")
       echo "Converting RST to PDF..." >&2
+
+      # Check if xelatex is installed and set Pandoc options accordingly
+      if command -v xelatex > /dev/null 2>&1; then
+        pandoc_options="--pdf-engine=xelatex"
+      else
+        echo "xelatex is not installed, proceeding without it." >&2
+        pandoc_options=""
+      fi
+
       options_array=(--from=rst $pandoc_options)
 
       iconv -c -t utf-8//IGNORE "$1"  | awk '{gsub(/[^[:print:]\t]/, ""); print}' > "${1}.utf8"
@@ -127,6 +131,15 @@ convert_to_pdf_if_needed() {
       ;;
     "me"|"md")
       echo "Converting Markdown (GFM) to PDF..." >&2
+
+      # Check if xelatex is installed and set Pandoc options accordingly
+      if command -v xelatex > /dev/null 2>&1; then
+        pandoc_options="--pdf-engine=xelatex"
+      else
+        echo "xelatex is not installed, proceeding without it." >&2
+        pandoc_options=""
+      fi
+
       options_array=(--from=gfm $pandoc_options)
 
       iconv -c -t utf-8//IGNORE "$1"  | awk '{gsub(/[^[:print:]\t]/, ""); print}' > "${1}.utf8"
@@ -153,8 +166,6 @@ convert_to_pdf_if_needed() {
 
 # Main Script Execution
 
-
-cp "$base/index.html" "$1.html"
 converted_file=$(convert_to_pdf_if_needed "$1")
 
 convert -verbose -density 127 -background ivory -alpha remove -alpha off -quality 77% -strip -interlace Plane "${converted_file}" +adjoin "${1}-%04d.${format}" || (mutool draw -i -o "${1}-%04d.${format}" "${converted_file}" && "$base/../../scripts/rename_1_based.sh" "${1}" "$format")
