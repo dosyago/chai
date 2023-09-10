@@ -21,11 +21,12 @@
   },
   "homepage": "https://github.com/dosyago/documentspark#readme",
   "dependencies": {
-    "pm2": "latest",
     "compression": "latest",
     "express": "latest",
     "hasha": "latest",
-    "multer": "latest"
+    "multer": "latest",
+    "pm2": "latest",
+    "serve-index": "^1.9.1"
   },
   "license": "AGPL-3.0"
 }
