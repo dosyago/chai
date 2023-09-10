@@ -187,9 +187,13 @@
     res.redirect(301, redirTo);
   });
 
-  app.post('/very-secure-manifest-convert', upload.single('pdf'), async (req, res) => {
+  app.post('/very-secure-manifest-convert(*)', upload.single('pdf'), async (req, res) => {
     let {file:pdf} = req;
     const {secret, url:docUrl} = req.body;
+
+    const ext = Path.extname(req.originalUrl);
+
+    const redirectToUrl = ext == '.html'; 
 
     if ( secret != SECRET ) {
       console.log({secret,SECRET});
@@ -244,13 +248,13 @@
     }
     
     if ( pdf ) { 
-      return convertIt({res, pdf});
+      return convertIt({res, pdf, redirectToUrl});
     } else {
       res.end(`Please provide a file or a URL`);
     }
   });
 
-  function convertIt({res, pdf, sendURL = true}) {
+  function convertIt({res, pdf, sendURL = true, redirectToUrl = false}) {
     // hash check for duplicate files
       const hash = hasha.fromFileSync(pdf.path);
       let viewUrl;
@@ -270,7 +274,9 @@
       if ( State.Files.has(hash) ) {
         const existingViewUrl = State.Files.get(hash);
         log(null, {note:'File exists', hash, existingViewUrl});
-        if ( sendURL ) {
+        if ( redirectToUrl ) {
+          res.redirect(existingViewUrl);
+        } else if ( sendURL ) {
           res.end(existingViewUrl);
         }
         return existingViewUrl;
@@ -333,7 +339,9 @@
     }
 
     // give the view url
-      if ( sendURL ) {
+      if ( redirectToUrl ) {
+        res.redirect(viewUrl);
+      } else if ( sendURL ) {
         res.end(viewUrl);
       }
       return viewUrl;
