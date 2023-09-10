@@ -134,9 +134,7 @@
     next();
   });
 
-  app.use(express.static('public', { 
-    maxAge: 31557600,
-  }));
+  app.use(express.static('public', { maxAge: 31557600 }));
 
   app.use('/archives', exploreDirectories(Path.resolve('archives'), {
     icons: true,
@@ -144,8 +142,24 @@
     view: 'details'
   }))
 
-  app.get('/archives/file:uuid/*', (req, res) => {
+  app.use('/uploads/file*0000.jpeg', (req, res) => {
+    // save browser cache from getting tired of this not existing while conversion is in progress
+      // prevent the repreated requests for first page to blow the cache
+      // as in browser will eventually think ti doesn't exist and just serve no exist for ever
+      // rather than make request
+    const fileSystemPath = Path.join(uploadPath, Path.basename(req.originalUrl));
+    console.log('Not found yet', fileSystemPath);
+    if ( fs.existsSync(fileSystemPath) ) {
+      res.send(fileSystemPath);
+    } else {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.status(404).end('');
+    }
+  });
 
+  app.get('/archives/file:uuid/*', (req, res) => {
     const pathElements = req.path.split(/\//g).filter(e => e.length);
     const path = Path.resolve(...pathElements);
     let newPath;
@@ -182,7 +196,6 @@
       res.sendStatus(401);
       return;
     }
-
 
     // logging 
       log(req, {file:pdf && pdf.path, docUrl});
