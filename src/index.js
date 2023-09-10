@@ -23,6 +23,7 @@
   const PIDFILE = Path.join(__dirname, '..', 'pid.txt');
   const HASH_FILE = Path.join(__dirname, '..', 'pdfs', 'hashes.json');
   const LINK_FILE = Path.join(__dirname, '..', 'pdfs', 'links.json');
+  const ArchivesDir = Path.resolve('archives');
   const jobs = {};
   const Files = new Map();
   const Links = new Map();
@@ -136,10 +137,17 @@
 
   app.use(express.static('public', { maxAge: 31557600 }));
 
-  app.use('/archives', exploreDirectories(Path.resolve('archives'), {
+  app.use('/archives', exploreDirectories(ArchivesDir, {
     icons: true,
     dot: true,
-    view: 'details'
+    view: 'details',
+    filter: (filename, index, files, dir) => {
+      // prevent archive root from being enumerated 
+      if ( Path.resolve(dir) == Path.resolve(ArchivesDir) ) {
+        return false;
+      } 
+      return true;
+    }
   }))
 
   app.use('/uploads/file*0000.jpeg', (req, res) => {
@@ -159,7 +167,7 @@
     }
   });
 
-  app.get('/archives/file:uuid/*', (req, res) => {
+  app.get(/^\/archives\/file[^\/]+\/.+/, (req, res) => {
     const pathElements = req.path.split(/\//g).filter(e => e.length);
     const path = Path.resolve(...pathElements);
     let newPath;
@@ -168,6 +176,7 @@
       const filename = Path.basename(path);
       newFilename = nextFileName(Path.extname(filename));
       newPath = Path.join(uploadPath, newFilename);
+      console.log("Linking", {existingPath: path, newPath});
       fs.linkSync(path, newPath);
       State.Links.set(path, newPath);
       syncHashes(State.Files, State.Links);
@@ -275,6 +284,7 @@
         const existingViewUrl = State.Files.get(hash);
         log(null, {note:'File exists', hash, existingViewUrl});
         if ( redirectToUrl ) {
+          console.log(`Redirecting to`, existingViewUrl);
           res.redirect(existingViewUrl);
         } else if ( sendURL ) {
           res.end(existingViewUrl);
@@ -294,6 +304,10 @@
 
     if ( mime && ARCHIVES.has(mime) ) {
       SCRIPT = EXPLORER;
+      const destPath = Path.join(uploadPath, pdf.filename);
+      if ( pdf.path != destPath ) {
+        fs.copyFileSync(pdf.path, destPath);
+      }
       subshell = spawn(SCRIPT, [pdf.path]);
     } else {
       SCRIPT = CONVERTER;
@@ -340,6 +354,7 @@
 
     // give the view url
       if ( redirectToUrl ) {
+        console.log(`Redirecting to`, viewUrl);
         res.redirect(viewUrl);
       } else if ( sendURL ) {
         res.end(viewUrl);
