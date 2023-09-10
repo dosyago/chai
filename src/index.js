@@ -167,7 +167,7 @@
     }
   });
 
-  app.get(/^\/archives\/file[^\/]+\/.+/, (req, res) => {
+  app.get(/^\/archives\/file[^\/]+\/.+/, async (req, res) => {
     const pathElements = req.path.split(/\//g).filter(e => e.length);
     const path = Path.resolve(...pathElements);
     let newPath;
@@ -188,7 +188,7 @@
       path: newPath,
       filename: newFilename,
     }
-    const redirTo = convertIt({
+    const redirTo = await convertIt({
       res, 
       pdf,
       sendURL: false,
@@ -257,13 +257,13 @@
     }
     
     if ( pdf ) { 
-      return convertIt({res, pdf, redirectToUrl});
+      return await convertIt({res, pdf, redirectToUrl});
     } else {
       res.end(`Please provide a file or a URL`);
     }
   });
 
-  function convertIt({res, pdf, sendURL = true, redirectToUrl = false}) {
+  async function convertIt({res, pdf, sendURL = true, redirectToUrl = false}) {
     // hash check for duplicate files
       const hash = hasha.fromFileSync(pdf.path);
       let viewUrl;
@@ -301,8 +301,13 @@
     // job start
     let subshell;
     let SCRIPT;
+    let isArchive = false;
+    let resolve;
+    let pr;
 
     if ( mime && ARCHIVES.has(mime) ) {
+      isArchive = true;
+      pr = new Promise(res => resolve = res);
       SCRIPT = EXPLORER;
       const destPath = Path.join(uploadPath, pdf.filename);
       if ( pdf.path != destPath ) {
@@ -339,6 +344,9 @@
         } else {
           console.log(`${SCRIPT} exited`);
         }
+        if ( isArchive && resolve ) {
+          resolve();
+        }
       });
 
       function killit() {
@@ -353,6 +361,10 @@
     }
 
     // give the view url
+        if ( isArchive && pr ) {
+          // we need to wait for extract for the directory to be visible
+          await pr;
+        }
       if ( redirectToUrl ) {
         console.log(`Redirecting to`, viewUrl);
         res.redirect(viewUrl);
