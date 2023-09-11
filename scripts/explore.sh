@@ -82,7 +82,7 @@ decompress_anything() {
     "application/x-7z-compressed")
       install_guard "7z" "p7zip"
       7z t "$archive_path" >/dev/null 2>&1 || { echo "Error: Archive integrity check failed."; exit 1; }
-      7z x "$archive_path" "$extraction_directory"
+      7z x "$archive_path" -o"$extraction_directory"
       ;;
     "application/x-tar")
       tar -tf "$archive_path" >/dev/null 2>&1 || { echo "Error: Archive integrity check failed."; exit 1; }
