@@ -110,6 +110,7 @@
   const ARCHIVES = new Set([
     "application/gzip",
     "application/x-bzip2",
+    "application/x-7z-compressed",
     "application/zip",
     "application/x-xz",
     "application/x-lzma",
@@ -117,7 +118,7 @@
     "application/x-rar",
     "application/x-tar",
   ]);
-  const VALID = /^\.[a-zA-Z][a-zA-Z0-9\-\_]{0,12}$|^$/g;
+  const VALID = /^\.[a-zA-Z0-9\-\_]{0,12}$|^$/g;
   const upload = multer({storage});
 
   const State = {
@@ -279,6 +280,7 @@
       } else {
         viewUrl = `${State.Protocol}://${State.Host}/uploads/${pdf.filename}.html`;
       }
+      console.log({mime});
       DEBUG.showHash && console.log({hash});
       if ( State.Files.has(hash) ) {
         const existingViewUrl = State.Files.get(hash);

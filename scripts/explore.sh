@@ -18,10 +18,12 @@ trap 'handle_error' ERR
 
 # Function to check and install required utilities
 install_guard() {
-  local utility_name="$1"
+  local utility_name="$1" 
+  local install_name="${2:-$utility_name}"
+  echo "install name: $install_name"
   if ! command -v "$utility_name" > /dev/null; then
     echo "Error: $utility_name is not installed. Installing..." >&2
-    sudo apt install -y "$utility_name"
+    sudo apt install -y "$install_name"
     if ! command -v "$utility_name" > /dev/null; then
       echo "Error: Could not install $utility_name..." >&2
       exit 1
@@ -58,13 +60,13 @@ decompress_anything() {
       unzip -d "$extraction_directory" "$archive_path"
       ;;
     "application/x-xz")
-      install_guard "xz-utils"
+      install_guard "xz"
       xz -t "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
       tar xJf "$archive_path" -C "$extraction_directory"
       ;;
     "application/x-lzma")
-      install_guard "lzma"
-      lzma -t "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
+      install_guard "xz"
+      xz -t "$archive_path" || { echo "Error: Archive integrity check failed."; exit 1; }
       tar --lzma -xf "$archive_path" -C "$extraction_directory"
       ;;
     "application/x-lz4")
@@ -73,9 +75,14 @@ decompress_anything() {
       tar --lz4 -xf "$archive_path" -C "$extraction_directory"
       ;;
     "application/x-rar")
-      install_guard "unrar"
+      install_guard "unar"
       unrar t "$archive_path" >/dev/null 2>&1 || { echo "Error: Archive integrity check failed."; exit 1; }
       unrar x "$archive_path" "$extraction_directory"
+      ;;
+    "application/x-7z-compressed")
+      install_guard "7z" "p7zip"
+      7z t "$archive_path" >/dev/null 2>&1 || { echo "Error: Archive integrity check failed."; exit 1; }
+      7z x "$archive_path" "$extraction_directory"
       ;;
     "application/x-tar")
       tar -tf "$archive_path" >/dev/null 2>&1 || { echo "Error: Archive integrity check failed."; exit 1; }
