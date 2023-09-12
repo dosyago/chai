@@ -169,7 +169,8 @@
   });
 
   app.get(/^\/archives\/file[^\/]+\/.+/, async (req, res) => {
-    const pathElements = req.path.split(/\//g).filter(e => e.length);
+    // decodeURIComponent is here necessary for paths with spaces
+    const pathElements = decodeURIComponent(req.path).split(/\//g).filter(e => e.length);
     const path = Path.resolve(...pathElements);
     let newPath;
     let newFilename;
