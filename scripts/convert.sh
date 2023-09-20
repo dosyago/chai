@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+. ./scripts/config.sh
 
 echo "$1"
 
@@ -86,6 +88,7 @@ convert_via_libreoffice() {
 convert_to_pdf_if_needed() {
   # Extract the file extension
   file_extension="${1##*.}"
+  file_extension=$(echo "$file_extension" | awk '{print tolower($0)}')
   pandoc_options=""
 
   echo "File ext: ${file_extension}" >&2
@@ -99,7 +102,7 @@ convert_to_pdf_if_needed() {
 
   # Convert files based on their extension
   case "$file_extension" in
-    "123"|"602"|"abw"|"agd"|"ase"|"bmp"|"cdr"|"cgm"|"cmx"|"csv"|"cwk"|"dbf"|"dif"|"dxf"|"emf"|"eps"|"fb2"|"fhd"|"gif"|"gnm"|"gnumeric"|"hwp"|"htm"|"html"|"jpe"|"jpeg"|"jpg"|"jtd"|"jtt"|"key"|"kth"|"mml"|"met"|"pdb"|"pl"|"plt"|"png"|"pm3"|"pm4"|"pm5"|"pm6"|"pmd"|"p65"|"pot"|"pps"|"psd"|"psw"|"pub"|"pxl"|"qxp"|"ras"|"rlf"|"rtf"|"sgf"|"sgv"|"slk"|"svg"|"svm"|"swf"|"tga"|"tif"|"tiff"|"uof"|"uop"|"uos"|"uot"|"wb2"|"wks"|"wk1"|"wk3"|"wk4"|"wps"|"wpd"|"wq1"|"wq2"|"wmf"|"xbm"|"xml"|"xpm"|"xlw"|"xlt"|"zabw"|"zmf"|"xls"|"doc"|"ppt"|"xlsx"|"docx"|"pptx"|"pages")
+    "123"|"602"|"abw"|"agd"|"ase"|"bmp"|"cdr"|"cgm"|"cmx"|"csv"|"cwk"|"dbf"|"dif"|"dxf"|"emf"|"eps"|"fb2"|"fhd"|"gif"|"gnm"|"gnumeric"|"hwp"|"htm"|"html"|"jpe"|"jpeg"|"jpg"|"jtd"|"jtt"|"key"|"kth"|"mml"|"met"|"pdb"|"pl"|"plt"|"png"|"pm3"|"pm4"|"pm5"|"pm6"|"pmd"|"p65"|"pot"|"pps"|"psd"|"psw"|"pub"|"pxl"|"qxp"|"ras"|"rlf"|"rtf"|"sgf"|"sgv"|"slk"|"svg"|"svm"|"swf"|"tga"|"tif"|"tiff"|"uof"|"uop"|"uos"|"uot"|"wb2"|"wks"|"wk1"|"wk3"|"wk4"|"wps"|"wpd"|"wq1"|"wq2"|"wmf"|"xbm"|"xml"|"xpm"|"xlw"|"xlt"|"zabw"|"zmf"|"xls"|"doc"|"ppt"|"xlsx"|"docx"|"pptx"|"pages"|"epub"|"mobi"|"odt"|"ods"|"numbers")
       echo "Converting Office files to PDF using LibreOffice..." >&2
       convert_via_libreoffice "$1" "$output_file"
       ;;
@@ -168,7 +171,7 @@ convert_to_pdf_if_needed() {
 
 converted_file=$(convert_to_pdf_if_needed "$1")
 
-convert -verbose -density 127 -background ivory -alpha remove -alpha off -quality 77% -strip -interlace Plane "${converted_file}" +adjoin "${1}-%04d.${format}" || (mutool draw -i -o "${1}-%04d.${format}" "${converted_file}" && "$base/../../scripts/rename_1_based.sh" "${1}" "$format")
+convert -verbose -density 127 -background ivory -alpha remove -alpha off -quality 77% -strip -interlace Plane "${converted_file}" +adjoin "${1}-%04d.${format}" || (mutool draw -i -o "${1}-%04d.${format}" "${converted_file}" && "${INSTALL_DIR}/chai/scripts/rename_1_based.sh" "${1}" "$format")
 
-cp "$1" "$base/../../pdfs/"
+cp "$1" "${pdfs}/"
 
